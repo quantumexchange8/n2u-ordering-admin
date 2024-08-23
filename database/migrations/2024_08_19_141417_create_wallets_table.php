@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->string('type');
-            $table->string('balance');
+            $table->decimal('balance', 13, 2)->default(0.00);
             $table->string('wallet_address');
             $table->timestamps();
         });

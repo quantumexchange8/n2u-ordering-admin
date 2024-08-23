@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('payment_type');
             $table->string('status');
             $table->string('handle_by')->nullable();
+            $table->string('remark')->nullable();
             $table->dateTime('transaction_date')->nullable();
             $table->timestamps();
         });

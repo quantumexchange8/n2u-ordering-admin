@@ -20,6 +20,10 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "primereact": "^10.8.2"
+        "chart.js": "^4.4.4",
+        "primeicons": "^7.0.0",
+        "primereact": "^10.8.2",
+        "react-chartjs-2": "^5.2.0",
+        "react-hot-toast": "^2.4.1"
     }
 }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('new_rank');
             $table->string('status');
             $table->dateTime('expired_date')->nullable();
+            $table->string('remark')->nullable();
+            $table->string('handle_by')->nullable();
             $table->timestamps();
         });
     }

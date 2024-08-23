@@ -36,7 +36,7 @@ export default function Navbar({ user, header, toggleSidebar }) {
 
     return (
         <nav className={`sticky top-0 z-10 ease-in duration-500 w-full bg-gray-25 md:shadow-navbar py-2 px-3 md:px-2 md:py-4`}>
-            <div className='flex items-center justify-between rounded-xl bg-white/60 shadow-container px-2 py-1'>
+            <div className='flex items-center justify-between rounded-xl bg-[#FFFEF8] shadow-container px-2 py-1'>
                 <div className='flex items-center gap-6'>
                     <div className='p-2.5 cursor-pointer hover:bg-neutral-200 rounded-xl' onClick={toggleSidebar}>
                         <MenuIcon />
@@ -68,12 +68,12 @@ export default function Navbar({ user, header, toggleSidebar }) {
                         </div>
                     </div>
                     <div className='hidden md:flex items-center gap-3 p-2 cursor-pointer hover:bg-gray-25 rounded drop-shadow hover:drop-shadow-md' >
-                        <div className='flex flex-col items-end gap-1'>
-                            <div className='text-neutral-950 font-semibold text-sm'>
+                        <div className='flex flex-col items-end'>
+                            <div className='text-neutral-950 font-semibold text-sm leading-tight'>
                                 {auth.user.name}
                             </div>
-                            <div className='text-gray-600 text-xss font-medium'>
-                                ID: 12345{/* {auth.user.role_id} */}
+                            <div className='text-gray-600 text-xss font-medium leading-tight'>
+                                {auth.user.email}
                             </div>
                         </div>
                         <img className='object-cover w-8 h-8 rounded-full' src='https://img.freepik.com/free-icon/user_318-159711.jpg' alt="merchant_pic" />

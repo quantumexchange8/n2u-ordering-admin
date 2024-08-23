@@ -17,14 +17,17 @@ return new class extends Migration
             $table->string('username')->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('verify')->nullable();
             $table->string('password');
             $table->string('role');
             $table->string('role_id')->nullable();
+            $table->string('dial_code');
             $table->string('phone');
+            $table->string('dob');
             $table->string('referral_code')->nullable();
             $table->string('hierarchyList')->nullable();
             $table->string('upline_id')->nullable();
-            $table->decimal('point', 13, 2)->default(0.00);
+            $table->double('point')->default(0);
             $table->string('rank_id')->nullable();
             $table->softDeletes();
             $table->rememberToken();

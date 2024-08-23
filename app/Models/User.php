@@ -44,4 +44,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function rank(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Ranking::class, 'rank_id', 'id');
+    }
+
+    public function upline(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'upline_id', 'id');
+    }
+    public function wallet(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(Wallet::class, 'user_id', 'id');
+    }
 }

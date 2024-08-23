@@ -2,18 +2,15 @@
 
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('login');
 });
 
 
@@ -31,6 +28,34 @@ Route::middleware('auth')->group(function () {
      *           Member Listing
      * ==============================
      */
+    Route::prefix('member')->group(function () {
+        Route::get('/member-listing', [MemberController::class, 'memberListing'])->name('member.member-listing');
+        Route::get('/member-details/{id}', [MemberController::class, 'memberDetails'])->name('member.memberDetails');
+        Route::get('/getMemberDetails', [MemberController::class, 'getMemberDetails'])->name('member.getMemberDetails');
+        Route::get('/getMemberJoined', [MemberController::class, 'getMemberJoined'])->name('member.getMemberJoined');
+        
+     });
+
+     /**
+     * ==============================
+     *           Transaction
+     * ==============================
+     */
+
+     Route::prefix('transaction')->group(function () {
+        Route::get('/deposit', [TransactionController::class, 'deposit'])->name('transaction.deposit');
+        Route::get('/getPendingDeposit', [TransactionController::class, 'getPendingDeposit'])->name('getPendingDeposit');
+        Route::get('/getDepositHistory', [TransactionController::class, 'getDepositHistory'])->name('getDepositHistory');
+        Route::post('/approveTransaction', [TransactionController::class, 'approveTransaction'])->name('approveTransaction');
+        Route::post('/rejectTransaction', [TransactionController::class, 'rejectTransaction'])->name('rejectTransaction');
+
+        Route::get('/getPendingRank', [TransactionController::class, 'getPendingRank'])->name('getPendingRank');
+        Route::post('/approvePendingRank', [TransactionController::class, 'approvePendingRank'])->name('approvePendingRank');
+        Route::post('/rejectPendingRank', [TransactionController::class, 'rejectPendingRank'])->name('rejectPendingRank');
+
+        // histroy
+        Route::get('/history', [TransactionController::class, 'history'])->name('transaction.history');
+     });
 
      /**
      * ==============================

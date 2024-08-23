@@ -1,54 +1,59 @@
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
+import { Button, CloseButton, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { useCallback, useState } from 'react';
+import { XIcon } from './Icon/Outline';
 
-export default function Modal({ children, show = false, maxWidth = '2xl', closeable = true, onClose = () => {} }) {
-    const close = () => {
-        if (closeable) {
-            onClose();
-        }
-    };
+export default function Modal({ children, show = false, maxWidth = 'md', maxHeight = 'md', isOpen, close, title, footer, closeIcon, preventCloseOnClickOutside = true }) {
 
     const maxWidthClass = {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-    }[maxWidth];
+        sm: 'sm:w-[300px] ',
+        md: 'max-w-[500px]',
+        lg: 'sm:max-w-[800px]',
+        xl: 'sm:w-full md:min-w-full lg:min-w-[1024px] xl:min-w-[1140px]',
+    }[maxWidth] ;
+
+    const maxHeightClass = {
+        sm: 'sm:h-[500px] xl:h-[700px]',
+        md: 'h-full md:max-h-[500px]',
+        lg: 'min-h-[70vh] md:max-h-600px',
+        xl: 'sm:h-full max-h-screen md:h-full lg:min-h-auto xl:min-h-[700px]',
+    }[maxHeight];
+
+    const handleOverlayClick = useCallback((e) => {
+        if (preventCloseOnClickOutside) {
+            e.stopPropagation();
+        } else {
+            close(); // Close if not preventing
+        }
+    }, [preventCloseOnClickOutside, close]);
 
     return (
-        <Transition show={show} leave="duration-200">
-            <Dialog
-                as="div"
-                id="modal"
-                className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center z-50 transform transition-all"
-                onClose={close}
-            >
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="absolute inset-0 bg-gray-500/75" />
-                </TransitionChild>
+        <>
+            <Dialog open={isOpen} as="div" className="relative z-20 focus:outline-none" onClose={preventCloseOnClickOutside ? () => {} : close} >
 
-                <TransitionChild
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
+                <div className="fixed inset-0 z-20 w-screen overflow-y-auto" onClick={handleOverlayClick}>
+                <div className="flex min-h-full justify-center items-start p-1 md:p-4 bg-black/25">
                     <DialogPanel
-                        className={`mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass}`}
+                        transition
+                        className={`w-full max-w-md rounded-xl bg-white border shadow-md backdrop-blur-2xl duration-150 ease-out data-[closed]:transform-[scale(90%)] data-[closed]:opacity-0 data-[closed]:ease-in ${maxWidthClass} ${maxHeightClass}`}
+                        onClick={(e) => e.stopPropagation()}
                     >
+                        <DialogTitle className="m-0 text-lg font-bold text-neutral-950 flex justify-between p-5 bg-white border-b border-gray-100 rounded-t-lg">
+                            <div className='w-full'>
+                                {title}
+                            </div>
+                            <CloseButton onClick={close}>
+                                {closeIcon}
+                                {/* <XIcon /> */}
+                            </CloseButton>
+                        </DialogTitle>
                         {children}
+                        <div className="w-full p-5 bg-white rounded-b-lg shadow-modal">
+                            {footer}
+                        </div>
                     </DialogPanel>
-                </TransitionChild>
+                </div>
+                </div>
             </Dialog>
-        </Transition>
+        </>
     );
 }
