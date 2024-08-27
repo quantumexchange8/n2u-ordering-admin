@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PointLog;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class MemberController extends Controller
@@ -51,5 +54,64 @@ class MemberController extends Controller
             'dineWallet' => $dineWallet,
             'transaction' => $transaction,
         ]);
+    }
+
+    public function updateMemberWallet(Request $request)
+    {
+        
+        $user = User::find($request->id);
+        $cashWallet = Wallet::where('type', 'cash_wallet')->where('user_id', $user->id)->first();
+        $dineWallet = Wallet::where('type', 'dine_in_wallet')->where('user_id', $user->id)->first();
+        $oldBalance = $dineWallet->balance;
+
+        if ($request->dine_in_wallet !== $dineWallet->balance) {
+            
+            $dineWallet->update([
+                'balance' => $request->dine_in_wallet,
+            ]);
+
+            $transaction = Transaction::create([
+                'user_id' => $user->id,
+                'transaction_type' => 'Deposit',
+                'wallet' => 'dine_in_wallet',
+                'amount' => $dineWallet->balance - $oldBalance,
+                'transaction_number' => RunningNumberService::getID('transaction'),
+                'payment_type' => 'manual',
+                'status' => 'success',
+                'handle_by' => Auth::user()->id,
+                'remark' => 'Admin deposit',
+                'transaction_date' => now(),
+            ]);
+        }
+
+        if ($request->cash_wallet != $cashWallet->balance) {
+            $cashWallet->update([
+                'balance' => $request->cash_wallet,
+            ]);
+        }
+
+        if ($request->point != null) {
+
+            $user->point += $request->point;
+            $user->save();
+
+            $pointLog = PointLog::create([
+                'user_id' => $user->id,
+                'amount' => $request->point,
+                'earning_point' => $request->point,
+                'old_point' => $request->point_balance,
+                'new_point' => $user->point,
+            ]);
+            
+        }
+
+        return redirect()->back();
+    }
+
+    public function updateMemberProfile(Request $request)
+    {
+        // dd($request->all());
+
+        return redirect()->back();
     }
 }

@@ -69,7 +69,7 @@ export default function Transaction({}) {
                         </TabPanel>
                         <TabPanel className="rounded-xl bg-white/5">
                             <div className="shadow-container bg-white/60 rounded-xl min-h-10 p-3">
-                                <Withdrawal data={filteredData} />
+                                <Withdrawal data={filteredData} fetchData={fetchData}/>
                             </div>
                         </TabPanel>
                         <TabPanel className="rounded-xl bg-white/5">

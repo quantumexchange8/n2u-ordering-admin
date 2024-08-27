@@ -36,7 +36,7 @@ export default function Navbar({ user, header, toggleSidebar }) {
 
     return (
         <nav className={`sticky top-0 z-10 ease-in duration-500 w-full bg-gray-25 md:shadow-navbar py-2 px-3 md:px-2 md:py-4`}>
-            <div className='flex items-center justify-between rounded-xl bg-[#FFFEF8] shadow-container px-2 py-1'>
+            <div className='flex items-center justify-between rounded-xl bg-white shadow-container px-2 py-1'>
                 <div className='flex items-center gap-6'>
                     <div className='p-2.5 cursor-pointer hover:bg-neutral-200 rounded-xl' onClick={toggleSidebar}>
                         <MenuIcon />

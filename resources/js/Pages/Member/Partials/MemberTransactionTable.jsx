@@ -9,6 +9,7 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { InputText } from 'primereact/inputtext';
 import TextInput from "@/Components/TextInput";
+import { Pending, Rejected, Success } from "@/Components/Badge";
 
 export default function MemberTransactionTable({ user, transaction }) {
 
@@ -44,6 +45,29 @@ export default function MemberTransactionTable({ user, transaction }) {
         return (
             <div className="flex flex-col">
                 {details.transaction_date != null ? formatDateTime(details.transaction_date) : '-'}
+            </div>
+        )
+    }
+
+    const StatusTemplate = (details) => {
+        
+        return (
+            <div className="flex flex-col">
+                {
+                    details.status === 'pending' && (
+                        <Pending />
+                    )
+                }
+                {
+                    details.status === 'success' && (
+                        <Success />
+                    )
+                }
+                {
+                    details.status === 'rejected' && (
+                        <Rejected />
+                    )
+                }
             </div>
         )
     }
@@ -109,19 +133,19 @@ export default function MemberTransactionTable({ user, transaction }) {
                         <DataTable value={filteredData} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                             <Column field="name" header="Mmeber" body={NameTemplate} style={{ minWidth: '70px'}} sortable></Column>
                             <Column field="transaction_type" header="Type" style={{ minWidth: '70px'}}></Column>
-                            <Column field="amount" header="Amount" style={{ minWidth: '70px'}}></Column>
-                            <Column field="status" header="Status" style={{ minWidth: '70px'}}></Column>
-                            <Column field="created_at" header="Requested Date" body={RequestTemplate} style={{ minWidth: '70px'}}></Column>
-                            <Column field="transaction_date" header="Approval Date" body={ApprovalTemplate} style={{ minWidth: '70px'}}></Column>
+                            <Column field="amount" header="Amount" style={{ minWidth: '70px'}} sortable></Column>
+                            <Column field="status" header="Status" body={StatusTemplate} style={{ maxWidth: '70px'}}></Column>
+                            <Column field="created_at" header="Requested Date" body={RequestTemplate} style={{ minWidth: '70px'}} sortable></Column>
+                            <Column field="transaction_date" header="Approval Date" body={ApprovalTemplate} style={{ minWidth: '70px'}} sortable></Column>
                             {/* <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column> */}
                         </DataTable>
                     </TabPanel>
                     <TabPanel className="p-4">
-                        <DataTable value={filteredData} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }}>
+                        <DataTable value={filteredData} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                             <Column field="name" header="Mmeber" body={NameTemplate} style={{ minWidth: '70px'}} sortable></Column>
                             <Column field="transaction_type" header="Type" style={{ minWidth: '70px'}}></Column>
                             <Column field="amount" header="Amount" style={{ minWidth: '70px'}}></Column>
-                            <Column field="status" header="Status" style={{ minWidth: '70px'}}></Column>
+                            <Column field="status" header="Status" body={StatusTemplate} style={{ minWidth: '70px'}}></Column>
                             <Column field="created_at" header="Requested Date" body={RequestTemplate} style={{ minWidth: '70px'}}></Column>
                             <Column field="transaction_date" header="Approval Date" body={ApprovalTemplate} style={{ minWidth: '70px'}}></Column>
                             {/* <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column> */}

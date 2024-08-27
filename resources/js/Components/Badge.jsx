@@ -18,16 +18,16 @@ const Merchant = () => {
 
 const Success = () => {
     return (
-        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-success-500 bg-[#16a34a1a]'>
-            <span className='text-success-500 text-xs font-medium leading-tight'>Success</span>
+        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-success-500 bg-success-500'>
+            <span className='text-white text-xs font-medium leading-tight'>Success</span>
         </div>
     );
 }
 
 const Rejected = () => {
     return (
-        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-error-600 bg-[#dc26261a]'>
-            <span className='text-error-600 text-xs font-medium leading-tight'>Rejected</span>
+        <div className='flex md:inline-flex px-1 py-0.5 justify-center items-center border rounded-[100px] border-error-500 bg-error-500'>
+            <span className='text-white text-xs font-medium leading-tight'>Rejected</span>
         </div>
     );
 }
@@ -50,7 +50,7 @@ const Freeze = () => {
 
 const Pending = () => {
     return (
-        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-primary-300 bg-primary-300'>
+        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-info-500 bg-info-500'>
             <span className='text-white text-xs font-medium leading-tight'>Pending</span>
         </div>
     );

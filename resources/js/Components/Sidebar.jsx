@@ -25,7 +25,7 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                 ${!expanded ? 'translate-x-[-100%] md:translate-x-0 md:w-[75px]' : 'translate-x-0 w-60'}
                 ease-in-out duration-300`}
             >
-                <nav className="flex flex-col gap-5 rounded-xl shadow-container min-h-[70vh] md:min-h-0 bg-white md:bg-[#FFFEF8]">
+                <nav className="flex flex-col gap-5 rounded-xl shadow-container min-h-[80vh] md:min-h-0 bg-white">
                     {!expanded ? (
                         <div className="px-1 py-4">
                             <img src="/assets/logo_2.png" alt="" className="w-8"/>
@@ -91,18 +91,18 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                         <div >
                             {
                                 !expanded ? (
-                                    <Link href={route('transaction.deposit')} className={`${
-                                        url === '/transaction/deposit' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    <Link href={route('transaction.pending')} className={`${
+                                        url === '/transaction/pending' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
                                     }`}>
-                                        <div className={`${url === '/transaction/deposit' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
-                                            <WalletIcon color='currentColor' className={`${url === '/transaction/deposit' ? 'text-white' : 'text-gray-800'}`}/>
+                                        <div className={`${url === '/transaction/pending' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <WalletIcon color='currentColor' className={`${url === '/transaction/pending' ? 'text-white' : 'text-gray-800'}`}/>
                                         </div>
                                     </Link>
                                 ) : (
-                                    <Link href={route('transaction.deposit')} className={`${
-                                        url === '/transaction/deposit' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    <Link href={route('transaction.pending')} className={`${
+                                        url === '/transaction/pending' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
                                     }`}>
-                                        <div className={`${url === '/transaction/deposit' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                        <div className={`${url === '/transaction/pending' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
                                             <WalletIcon color='currentColor'/>
                                             <div className="text-sm">
                                                 Pending
@@ -164,7 +164,7 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                             {
                                 !expanded ? (
                                     <div className="p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md cursor-pointer" onClick={logout}>
-                                        <LogoutIcon color='currentColor' className={`${url === '/configuration' ? 'text-white' : 'text-gray-800'}`}/>
+                                        <LogoutIcon color='currentColor' className={`text-gray-800`}/>
                                     </div>
                                 ) : (
                                     <div className='p-3 flex items-center gap-3 cursor-pointer hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md font-medium' onClick={logout}>

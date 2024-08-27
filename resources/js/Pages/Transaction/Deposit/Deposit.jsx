@@ -4,9 +4,9 @@ import axios from 'axios';
 import { useEffect } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { CheckIcon, EditIcon, XIcon2 } from "@/Components/Icon/Outline";
-import { formatDateTime } from "@/Composables";
-import { Pending } from "@/Components/Badge";
+import { CheckIcon, EditIcon, ViewDetails, XIcon, XIcon2 } from "@/Components/Icon/Outline";
+import { formatDateTime, formatWallet } from "@/Composables";
+import { Pending, Rejected, Success } from "@/Components/Badge";
 import Modal from "@/Components/Modal";
 import Tooltip from "@/Components/Tooltip";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
@@ -24,10 +24,11 @@ export default function Deposit({ data, fetchData }) {
     const [remark, setRemark] = useState('');
 
     const [selectedId, setSelectedId] = useState(null);
+    const [selectedDeposit, setSelectedDeposit] = useState(null);
 
     const openModal = (data) => {
         setIsOpen(true)
-        setDialogVisible(true)
+        setSelectedDeposit(data)
     }
 
     const closeModal = () => {
@@ -126,11 +127,11 @@ export default function Deposit({ data, fetchData }) {
                         <XIcon2 className='text-red-600'/>
                     </Tooltip>
                 </div>
-                {/* <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => openModal(data)}>
+                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => openModal(data)}>
                     <Tooltip text='View Details'>
-                        <EditIcon />
+                        <ViewDetails />
                     </Tooltip>
-                </div> */}
+                </div>
             </div>
         );
     };
@@ -164,14 +165,22 @@ export default function Deposit({ data, fetchData }) {
     return (
         <>
             <div className="w-full">
-                <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
-                    <Column field="user_id" header="user" body={userDetails}></Column>
-                    <Column field="amount" header="Amount" ></Column>
-                    <Column field="transaction_number" header="Transaction" ></Column>
-                    <Column field="created_at" header="Request Date" body={requestedDate}></Column>
-                    <Column field="status" header="Status" body={statusBadge}></Column>
-                    <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
-                </DataTable>
+                {
+                    data.length > 0 ? (
+                        <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
+                            <Column field="user_id" header="user" body={userDetails}></Column>
+                            <Column field="amount" header="Amount" ></Column>
+                            <Column field="transaction_number" header="Transaction" ></Column>
+                            <Column field="created_at" header="Request Date" body={requestedDate}></Column>
+                            <Column field="status" header="Status" body={statusBadge}></Column>
+                            <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
+                        </DataTable>
+                    ) : (
+                        <div>
+                            No Pending Deposit
+                        </div>
+                    )
+                }   
             </div>
         
             <ConfirmDialog 
@@ -261,10 +270,42 @@ export default function Deposit({ data, fetchData }) {
 
             <Modal
                 isOpen={isOpen}
-                close={setIsOpen}
+                close={closeModal}
                 title='View Details'
+                closeIcon={<XIcon />}
+                maxWidth='md'
+                maxHeight='md'
             >
+                <div className="flex flex-col px-3 py-2">
+                    {selectedDeposit && (
+                        <div className="grid grid-cols-2 gap-3 items-center ">
+                            <div className="max-w-20 text-sm">User name</div>
+                            <div className="font-bold text-sm">{selectedDeposit.user.name}</div>
 
+                            <div className="max-w-20 text-sm">Wallet</div>
+                            <div className="font-bold text-sm">{formatWallet(selectedDeposit.wallet)}</div>
+
+                            <div className="max-w-20 text-sm">Amount</div>
+                            <div className="font-bold text-sm">RM {selectedDeposit.amount}</div>
+
+                            <div className="text-sm">Transaction Number</div>
+                            <div className="font-bold text-sm">{selectedDeposit.transaction_number}</div>
+
+                            <div className="text-sm">Payment Method</div>
+                            <div className="font-bold text-sm">{selectedDeposit.payment_type}</div>
+
+                            <div className="text-sm">Status</div>
+                            <div className="font-bold text-sm">
+                                {
+                                    selectedDeposit.status === 'pending' ? <Pending /> : selectedDeposit.status === 'success' ? <Success /> : <Rejected />
+                                }
+                            </div>
+
+                            <div className="text-sm">Requested Date</div>
+                            <div className="font-bold text-sm">{formatDateTime(selectedDeposit.created_at)}</div>
+                        </div>
+                    )}
+                </div>
             </Modal>
         </>
     )

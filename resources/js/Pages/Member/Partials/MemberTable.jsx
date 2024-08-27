@@ -7,11 +7,20 @@ import { Column } from 'primereact/column';
 import Button from "@/Components/Button";
 import { formatDate } from "@/Composables/index"
 import { Link } from "@inertiajs/react";
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import TextInput from "@/Components/TextInput";
 
 export default function MemberTable() {
 
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+    });
 
     const fetchData = async () => {
         try {
@@ -99,11 +108,41 @@ export default function MemberTable() {
         );
     }
 
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
+
+    const renderHeader = () => {
+        return (
+            <div className="flex justify-content-end">
+                <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search" />
+                    <TextInput 
+                        value={globalFilterValue} 
+                        onChange={onGlobalFilterChange} 
+                        placeholder="Keyword Search"
+                        withIcon
+                        className='font-medium'
+                    />
+                </IconField>
+            </div>
+        );
+    };
+
+    const header = renderHeader();
+
     return (
         <div className="flex flex-col">
             <div></div>
             <div>
-                <DataTable value={data} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }}>
+                <DataTable value={data} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                     <Column field="name" header="Member" body={NameTemplate} style={{ minWidth: '70px'}} sortable></Column>
                     <Column field="phone" header="Phone" style={{ minWidth: '70px' }}></Column>
                     <Column field="point" header="Points" body={PointTemplate} style={{ minWidth: '70px' }}></Column>

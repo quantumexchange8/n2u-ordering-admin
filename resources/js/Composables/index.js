@@ -38,8 +38,17 @@ const formatAmount = (amount) => {
     return parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+const formatWallet = (name) => {
+    if (name === 'dine_in_wallet') {
+        return 'Dine In Wallet';
+    } else if (name === 'cash_wallet') {
+        return 'Cash Wallet';
+    }
+}
+
 export {
     formatDateTime, 
     formatDate,
-    formatAmount
+    formatAmount,
+    formatWallet,
 };

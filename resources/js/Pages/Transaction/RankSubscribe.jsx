@@ -10,6 +10,7 @@ import Button from "@/Components/Button";
 import toast from "react-hot-toast";
 import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
+import { EmptyDatasImg } from "@/Components/Icon/Brand";
 
 export default function RankSubsribe() {
 
@@ -156,14 +157,24 @@ export default function RankSubsribe() {
     return(
         <>
             <div className="w-full">
-                <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
-                    <Column field="user_id" header="User" body={userDetails}></Column>
-                    <Column field="rank_id" header="Current Rank" body={rankDetails} ></Column>
-                    {/* <Column field="transaction_number" header="Transaction" ></Column>
-                    <Column field="created_at" header="Request Date" body={requestedDate}></Column>
-                    <Column field="status" header="Status" body={statusBadge}></Column> */}
-                    <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
-                </DataTable>
+                {
+                    data.length > 0 ? (
+                        <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
+                            <Column field="user_id" header="User" body={userDetails}></Column>
+                            <Column field="rank_id" header="Current Rank" body={rankDetails} ></Column>
+                            {/* <Column field="transaction_number" header="Transaction" ></Column>
+                            <Column field="created_at" header="Request Date" body={requestedDate}></Column>
+                            <Column field="status" header="Status" body={statusBadge}></Column> */}
+                            <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
+                        </DataTable>
+                    ) : (
+                        <div className="flex flex-col justify-center items-center min-h-[70vh]">
+                            <div>
+                                No pending Subscribers
+                            </div>
+                        </div>
+                    )
+                }
             </div>
 
             <ConfirmDialog 

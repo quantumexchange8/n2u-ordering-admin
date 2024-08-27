@@ -50,7 +50,6 @@ class TransactionController extends Controller
 
     public function approveTransaction(Request $request)
     {
-        
         $transaction = Transaction::find($request->id);
 
         $transaction->update([

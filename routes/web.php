@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/member-details/{id}', [MemberController::class, 'memberDetails'])->name('member.memberDetails');
         Route::get('/getMemberDetails', [MemberController::class, 'getMemberDetails'])->name('member.getMemberDetails');
         Route::get('/getMemberJoined', [MemberController::class, 'getMemberJoined'])->name('member.getMemberJoined');
+
+        Route::post('/updateMemberWallet', [MemberController::class, 'updateMemberWallet'])->name('member.updateMemberWallet');
+        Route::post('/updateMemberProfile', [MemberController::class, 'updateMemberProfile'])->name('member.updateMemberProfile');
         
      });
 
@@ -43,7 +46,7 @@ Route::middleware('auth')->group(function () {
      */
 
      Route::prefix('transaction')->group(function () {
-        Route::get('/deposit', [TransactionController::class, 'deposit'])->name('transaction.deposit');
+        Route::get('/pending', [TransactionController::class, 'deposit'])->name('transaction.pending');
         Route::get('/getPendingDeposit', [TransactionController::class, 'getPendingDeposit'])->name('getPendingDeposit');
         Route::get('/getDepositHistory', [TransactionController::class, 'getDepositHistory'])->name('getDepositHistory');
         Route::post('/approveTransaction', [TransactionController::class, 'approveTransaction'])->name('approveTransaction');
