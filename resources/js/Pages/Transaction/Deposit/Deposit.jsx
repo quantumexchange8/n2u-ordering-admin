@@ -15,6 +15,9 @@ import { useForm } from "@inertiajs/react";
 import toast from "react-hot-toast";
 import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
 
 export default function Deposit({ data, fetchData }) {
     
@@ -25,6 +28,11 @@ export default function Deposit({ data, fetchData }) {
 
     const [selectedId, setSelectedId] = useState(null);
     const [selectedDeposit, setSelectedDeposit] = useState(null);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+    });
 
     const openModal = (data) => {
         setIsOpen(true)
@@ -162,12 +170,42 @@ export default function Deposit({ data, fetchData }) {
         )
     }
 
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
+
+    const renderHeader = () => {
+        return (
+            <div className="flex justify-content-end">
+                <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search" />
+                    <TextInput 
+                        value={globalFilterValue} 
+                        onChange={onGlobalFilterChange} 
+                        placeholder="Keyword Search"
+                        withIcon
+                        className='font-medium'
+                    />
+                </IconField>
+            </div>
+        );
+    };
+
+    const header = renderHeader();
+
     return (
         <>
             <div className="w-full">
                 {
                     data.length > 0 ? (
-                        <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
+                        <DataTable value={data} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                             <Column field="user_id" header="user" body={userDetails}></Column>
                             <Column field="amount" header="Amount" ></Column>
                             <Column field="transaction_number" header="Transaction" ></Column>

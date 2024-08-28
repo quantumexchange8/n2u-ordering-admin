@@ -142,7 +142,7 @@ export default function MemberTable() {
         <div className="flex flex-col">
             <div></div>
             <div>
-                <DataTable value={data} removableSort paginator rows={5} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
+                <DataTable value={data} removableSort paginator rows={8} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                     <Column field="name" header="Member" body={NameTemplate} style={{ minWidth: '70px'}} sortable></Column>
                     <Column field="phone" header="Phone" style={{ minWidth: '70px' }}></Column>
                     <Column field="point" header="Points" body={PointTemplate} style={{ minWidth: '70px' }}></Column>

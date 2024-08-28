@@ -40,11 +40,24 @@ class TransactionController extends Controller
 
         $history = Transaction::query()
                 ->where('transaction_type', 'Deposit')
-                ->where('status', 'pending')
+                ->whereNot('status', 'pending')
                 ->with(['user:id,name'])
                 ->latest()
                 ->get();
         
+        return response()->json($history);
+    }
+
+    public function getWithdrawalHistory()
+    {
+
+        $history = Transaction::query()
+                ->where('transaction_type', 'Withdrawal')
+                ->whereNot('status', 'pending')
+                ->with(['user:id,name'])
+                ->latest()
+                ->get();
+
         return response()->json($history);
     }
 

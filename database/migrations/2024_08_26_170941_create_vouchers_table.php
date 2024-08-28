@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('product_id')->nullable();
             $table->dateTime('valid_from')->nullable();
             $table->dateTime('valid_to')->nullable();
-            $table->string('valid_type');
+            $table->string('valid_type')->nullable();
             $table->string('status');
             $table->unsignedInteger('rank_id');
             $table->longText('description')->nullable();

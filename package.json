@@ -21,8 +21,10 @@
     },
     "dependencies": {
         "chart.js": "^4.4.4",
+        "dayjs": "^1.11.13",
         "primeicons": "^7.0.0",
         "primereact": "^10.8.2",
+        "quill": "^2.0.2",
         "react-chartjs-2": "^5.2.0",
         "react-hot-toast": "^2.4.1"
     }

@@ -97,6 +97,7 @@ class MemberController extends Controller
 
             $pointLog = PointLog::create([
                 'user_id' => $user->id,
+                'type' => 'earned',
                 'amount' => $request->point,
                 'earning_point' => $request->point,
                 'old_point' => $request->point_balance,

@@ -14,14 +14,14 @@ export default function MemberListing() {
 
             <div className="flex flex-col gap-5">
                 {/* Graph */}
-                <div className="flex flex-row gap-5">
+                {/* <div className="flex flex-row gap-5"> */}
                     {/* <div className="w-full p-4 shadow-container bg-[#FFFEF8] md:shadow-container rounded-xl flex flex-col gap-3">
                         <MemberJoinedMonthly />
                     </div>
                     <div className="w-full p-4 shadow-container bg-[#FFFEF9] md:shadow-container rounded-xl flex flex-col gap-3">
 
                     </div> */}
-                </div>
+                {/* </div> */}
                 {/* member table */}
                 <div className="w-full p-4 shadow-container bg-white/60 md:shadow-container rounded-xl flex flex-col gap-3">
                     <MemberTable />

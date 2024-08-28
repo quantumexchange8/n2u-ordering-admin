@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\VoucherController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pending', [TransactionController::class, 'deposit'])->name('transaction.pending');
         Route::get('/getPendingDeposit', [TransactionController::class, 'getPendingDeposit'])->name('getPendingDeposit');
         Route::get('/getDepositHistory', [TransactionController::class, 'getDepositHistory'])->name('getDepositHistory');
+        Route::get('/getWithdrawalHistory', [TransactionController::class, 'getWithdrawalHistory'])->name('getWithdrawalHistory');
         Route::post('/approveTransaction', [TransactionController::class, 'approveTransaction'])->name('approveTransaction');
         Route::post('/rejectTransaction', [TransactionController::class, 'rejectTransaction'])->name('rejectTransaction');
 
@@ -62,10 +64,28 @@ Route::middleware('auth')->group(function () {
 
      /**
      * ==============================
+     *           Voucher Listing
+     * ==============================
+     */
+
+     Route::prefix('voucher')->group(function () {
+        Route::get('/voucher-listing', [VoucherController::class, 'voucherListing'])->name('voucher.voucher-listing');
+        Route::post('/addVoucher', [VoucherController::class, 'addVoucher'])->name('voucher.addVoucher');
+        Route::post('/deleteVoucher', [VoucherController::class, 'deleteVoucher'])->name('voucher.deleteVoucher');
+        Route::post('/updateVoucher', [VoucherController::class, 'updateVoucher'])->name('voucher.updateVoucher');
+        
+        Route::get('/getAllVoucher', [VoucherController::class, 'getAllVoucher'])->name('getAllVoucher');
+     });
+
+     /**
+     * ==============================
      *           Configuration
      * ==============================
      */
     Route::get('/configuration', [ConfigurationController::class, 'configuration'])->name('configuration');
+    Route::post('/newConfiguration', [ConfigurationController::class, 'newConfiguration'])->name('newConfiguration');
+    Route::post('/updateConfiguration', [ConfigurationController::class, 'updateConfiguration'])->name('updateConfiguration');
+    Route::post('/deleteSetting', [ConfigurationController::class, 'deleteSetting'])->name('deleteSetting');
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

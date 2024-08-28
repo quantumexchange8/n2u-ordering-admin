@@ -15,5 +15,6 @@ class PointLog extends Model
         'earning_point',
         'old_point',
         'new_point',
+        'type',
     ];
 }

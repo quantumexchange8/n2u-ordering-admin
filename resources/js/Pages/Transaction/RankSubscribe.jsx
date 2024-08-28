@@ -11,6 +11,9 @@ import toast from "react-hot-toast";
 import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
 import { EmptyDatasImg } from "@/Components/Icon/Brand";
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
 
 export default function RankSubsribe() {
 
@@ -18,6 +21,11 @@ export default function RankSubsribe() {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedId, setSelectedId] = useState(null);
     const [remark, setRemark] = useState('');
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+    });
 
     const fetchData = async () => {
         try {
@@ -154,12 +162,42 @@ export default function RankSubsribe() {
         );
     };
 
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
+
+    const renderHeader = () => {
+        return (
+            <div className="flex justify-content-end">
+                <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search" />
+                    <TextInput 
+                        value={globalFilterValue} 
+                        onChange={onGlobalFilterChange} 
+                        placeholder="Keyword Search"
+                        withIcon
+                        className='font-medium'
+                    />
+                </IconField>
+            </div>
+        );
+    };
+
+    const header = renderHeader();
+
     return(
         <>
             <div className="w-full">
                 {
                     data.length > 0 ? (
-                        <DataTable value={data} tableStyle={{ minWidth: '160px' }}>
+                        <DataTable value={data} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                             <Column field="user_id" header="User" body={userDetails}></Column>
                             <Column field="rank_id" header="Current Rank" body={rankDetails} ></Column>
                             {/* <Column field="transaction_number" header="Transaction" ></Column>

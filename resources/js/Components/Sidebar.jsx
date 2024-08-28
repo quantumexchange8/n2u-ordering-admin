@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 // import { EinbillLogo } from "@/Components/Icon/logo";
-import { ConfigurationIcon, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, WalletIcon, XIcon } from "./Icon/Outline";
+import { ConfigurationIcon, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, VoucherIcon, WalletIcon, XIcon } from "./Icon/Outline";
 
 export default function SideBar({ user, showingNavigationDropdown, expanded, toggleSidebar }) {
 
@@ -130,6 +130,30 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                             <HistoryIcon color='currentColor'/>
                                             <div className="text-sm">
                                                 Transaction History
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )
+                            }
+                        </div>
+                        <div >
+                            {
+                                !expanded ? (
+                                    <Link href={route('voucher.voucher-listing')} className={`${
+                                        url === '/voucher/voucher-listing' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/voucher/voucher-listing' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <VoucherIcon color='currentColor' className={`${url === '/voucher/voucher-listing' ? 'text-white' : 'text-gray-800'}`}/>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <Link href={route('voucher.voucher-listing')} className={`${
+                                        url === '/voucher/voucher-listing' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/voucher/voucher-listing' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                            <VoucherIcon color='currentColor'/>
+                                            <div className="text-sm">
+                                                Voucher Listing
                                             </div>
                                         </div>
                                     </Link>

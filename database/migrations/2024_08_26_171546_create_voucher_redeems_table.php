@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('voucher_id');
+            $table->string('code');
             $table->string('status');
             $table->timestamps();
         });
