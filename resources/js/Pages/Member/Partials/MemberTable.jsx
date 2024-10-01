@@ -137,10 +137,12 @@ export default function MemberTable() {
     };
 
     const header = renderHeader();
-
+    
     return (
         <div className="flex flex-col">
             <div></div>
+            {
+            data.length > 0 ? (
             <div>
                 <DataTable value={data} removableSort paginator rows={8} tableStyle={{ minWidth: '160px' }} header={header} filters={filters}>
                     <Column field="name" header="Member" body={NameTemplate} style={{ minWidth: '70px'}} sortable></Column>
@@ -153,6 +155,26 @@ export default function MemberTable() {
                     <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
                 </DataTable>
             </div>
+            ) : (
+                <div className="flex justify-center items-center h-[70vh]">
+                    {
+                        isLoading ? (
+                            <l-zoomies
+                            size="150"
+                            stroke="5"
+                            bg-opacity="0.1"
+                            speed="1.0" 
+                            color="#F26522" 
+                            ></l-zoomies>
+                        ) : (
+                            <div>
+                                No Available Option
+                            </div>
+                        )
+                    }
+                </div>
+            )
+        }
         </div>
     )
 }

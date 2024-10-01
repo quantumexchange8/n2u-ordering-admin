@@ -234,8 +234,22 @@ export default function VoucherTable({ rank }) {
                             }
                         </div>
                     ) : (
-                        <div>
-                            No voucher created yet
+                        <div className="flex justify-center items-center h-[70vh]">
+                            {
+                                isLoading ? (
+                                    <l-zoomies
+                                    size="150"
+                                    stroke="5"
+                                    bg-opacity="0.1"
+                                    speed="1.0" 
+                                    color="#F26522" 
+                                    ></l-zoomies>
+                                ) : (
+                                    <div>
+                                        No voucher created yet
+                                    </div>
+                                )
+                            }
                         </div>
                     )
                 }

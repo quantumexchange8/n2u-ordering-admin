@@ -33,6 +33,7 @@ export default function Deposit({ data, fetchData }) {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
     });
+    const [isLoading, setIsLoading] = useState(true);
 
     const openModal = (data) => {
         setIsOpen(true)
@@ -214,8 +215,22 @@ export default function Deposit({ data, fetchData }) {
                             <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
                         </DataTable>
                     ) : (
-                        <div>
-                            No Pending Deposit
+                        <div className="flex justify-center items-center h-[70vh]">
+                            {
+                                isLoading ? (
+                                    <l-zoomies
+                                        size="150"
+                                        stroke="5"
+                                        bg-opacity="0.1"
+                                        speed="1.0" 
+                                        color="#F26522" 
+                                    ></l-zoomies>
+                                ) : (
+                                    <div>
+                                        No Pending Deposit
+                                    </div>
+                                )
+                            }
                         </div>
                     )
                 }   

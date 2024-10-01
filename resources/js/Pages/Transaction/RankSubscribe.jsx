@@ -206,10 +206,22 @@ export default function RankSubsribe() {
                             <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
                         </DataTable>
                     ) : (
-                        <div className="flex flex-col justify-center items-center min-h-[70vh]">
-                            <div>
-                                No pending Subscribers
-                            </div>
+                        <div className="flex justify-center items-center h-[70vh]">
+                                {
+                                    isLoading ? (
+                                        <l-zoomies
+                                        size="150"
+                                        stroke="5"
+                                        bg-opacity="0.1"
+                                        speed="1.0" 
+                                        color="#F26522" 
+                                        ></l-zoomies>
+                                    ) : (
+                                        <div>
+                                            No Pending Subscriber
+                                        </div>
+                                    )
+                                }
                         </div>
                     )
                 }
