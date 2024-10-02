@@ -86,7 +86,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/newConfiguration', [ConfigurationController::class, 'newConfiguration'])->name('newConfiguration');
     Route::post('/updateConfiguration', [ConfigurationController::class, 'updateConfiguration'])->name('updateConfiguration');
     Route::post('/deleteSetting', [ConfigurationController::class, 'deleteSetting'])->name('deleteSetting');
-
+    Route::post('/newTax', [ConfigurationController::class, 'newTax'])->name('newTax');
+    Route::post('/updateTax', [ConfigurationController::class, 'updateTax'])->name('updateTax');
+    Route::post('/deleteTax', [ConfigurationController::class, 'deleteTax'])->name('deleteTax');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

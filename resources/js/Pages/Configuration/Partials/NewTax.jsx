@@ -1,18 +1,17 @@
 import Button from "@/Components/Button";
 import { PlusIcon, DeleteIcon, EditIcon, XIcon } from "@/Components/Icon/Outline";
-import InputError from "@/Components/InputError";
 import Modal from "@/Components/Modal";
-import TextInput from "@/Components/TextInput";
-import { useForm } from "@inertiajs/react";
 import React from "react";
 import { useState } from "react";
+import { useForm } from "@inertiajs/react";
+import TextInput from "@/Components/TextInput";
+import InputError from "@/Components/InputError";
 import toast from "react-hot-toast";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
-export default function NewConfig({ settings }) {
-    
+export default function NewTax({ taxes}) {
     const [newOpen, setNewOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshTable, setRefreshTable] = useState(false);
@@ -22,8 +21,10 @@ export default function NewConfig({ settings }) {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         id: '',
-        setting_name: '',
-        value: '',
+        name: '',
+        amount: '',
+        tax_after: '',
+        tax_type: '',
     });
 
     const handleItemAdded = () => {
@@ -39,9 +40,9 @@ export default function NewConfig({ settings }) {
         reset();
     }
 
-    const submitNewConfig = (e) => {
+    const submitNewTax = (e) => {
         e.preventDefault();
-        post('/newConfiguration', {
+        post('/newTax', {
             preserveScroll: true,
             onSuccess: () => {
                 setIsLoading(false);
@@ -57,13 +58,15 @@ export default function NewConfig({ settings }) {
         });
     }
 
-    const EditModal = (setting) => {
+    const EditModal = (tax) => {
         setEditOpen(true)
-        setEditSelected(setting)
+        setEditSelected(tax)
         setData({
-            id: setting.id || '',     // Set the id if exists
-            setting_name: setting.setting_name || '', // Set the name if exists
-            value: setting.value || '', // Set the value if exists
+            id: tax.id || '',     // Set the id if exists
+            name: tax.name || '', // Set the name if exists
+            amount: tax.amount || '', // Set the value if exists
+            tax_after: tax.tax_after || '',
+            tax_type: tax.tax_type || '',
         });
     }
 
@@ -71,12 +74,12 @@ export default function NewConfig({ settings }) {
         setEditOpen(false)
     }
 
-    const DeleteModal = (setting) => {
-        setSelectedId(setting.id)
-        
+    const DeleteModal = (tax) => {
+        setSelectedId(tax.id)
+
         confirmDialog({
             group: 'delete',
-            message: 'Are you sure you want to Delete this setting?',
+            message: 'Are you sure you want to Delete this tax?',
             header: 'Delete',
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
@@ -87,8 +90,9 @@ export default function NewConfig({ settings }) {
     }
 
     const confirmDelete = async () => {
+        
         try {
-            await axios.post('/deleteSetting', {
+            await axios.post('/deleteTax', {
                 id: selectedId,
             });
             handleItemAdded();
@@ -109,9 +113,9 @@ export default function NewConfig({ settings }) {
         
     }
 
-    const saveConfig = (e) => {
+    const saveTax = (e) => {
         e.preventDefault();
-        post('/updateConfiguration', {
+        post('/updateTax', {
             preserveScroll: true,
             onSuccess: () => {
                 setIsLoading(false);
@@ -127,13 +131,13 @@ export default function NewConfig({ settings }) {
         });
     }
 
-    const ActionTemplate = (setting) => {
+    const ActionTemplate = (tax) => {
         return (
             <div className="flex justify-center items-center gap-3">
-                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => EditModal(setting)}>
+                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => EditModal(tax)}>
                     <EditIcon /> 
                 </div>
-                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => DeleteModal(setting)}>
+                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => DeleteModal(tax)}>
                     <DeleteIcon />
                 </div>
             </div>
@@ -142,39 +146,41 @@ export default function NewConfig({ settings }) {
 
     return (
         <>
-            <div className="flex flex-col">
-                <div className="flex items-center gap-5">
-                    <div className="w-full p-4 shadow-container bg-white/60 md:shadow-container rounded-xl flex flex-col gap-3">
-                        <div className="flex items-center justify-between border-b border-neutral-200 py-2">
-                            <div className="text-base font-bold ">
-                                Configuration
-                            </div>
-                            <div>
-                            <Button
-                                size="lg"
-                                className="py-2 px-2 gap-1 rounded-lg text-sm"
-                                onClick={() => addNew()}
-                                iconOnly
+        <div className="flex flex-col">
+            <div className="flex items-center gap-5">
+                <div className="w-full p-4 shadow-container bg-white/60 md:shadow-container rounded-xl flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b border-neutral-200 py-2">
+                        <div className="text-base font-bold ">
+                            Tax
+                        </div>
+                        <div>
+                        <Button
+                            size="lg"
+                            className="py-2 px-2 gap-1 rounded-lg text-sm"
+                            onClick={() => addNew()}
+                            iconOnly
                             >
                                 <PlusIcon />
-                                Add Configuration
+                                Add Tax
                             </Button>
-                            </div>
                         </div>
-                        <DataTable value={settings} tableStyle={{ minWidth: '160px' }}>
-                            <Column field="setting_name" header="Name" style={{ minWidth: '70px'}}></Column>
-                            <Column field="value" header="Amount" style={{ minWidth: '70px' }}></Column>
-                            <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
-                        </DataTable>
                     </div>
+                    <DataTable value={taxes} tableStyle={{ minWidth: '160px' }}>
+                        <Column field="name" header="Name" style={{ minWidth: '40px'}}></Column>
+                        <Column field="amount" header="Amount" style={{ minWidth: '30px' }}></Column>
+                        <Column field="tax_after" header="Tax After" style={{ minWidth: '30px' }}></Column>
+                        <Column field="tax_type" header="Tax Type" style={{ minWidth: '30px' }}></Column>
+                        <Column header="" body={ActionTemplate} style={{ minWidth: '30px' }}></Column>
+                    </DataTable>
                 </div>
-                <div></div>
             </div>
+            <div></div>
+        </div>
             
             <Modal
                 isOpen={newOpen}
                 close={closeNew}
-                title='New Configuration'
+                title='New Tax'
                 closeIcon={<XIcon />}
                 maxWidth='md'
                 maxHeight='md'
@@ -192,7 +198,7 @@ export default function NewConfig({ settings }) {
                             size="sm"
                             className="flex justify-center"
                             type="submit"
-                            onClick={submitNewConfig}
+                            onClick={submitNewTax}
                             disabled={processing}
                         >
                             <span className="px-2">Save</span>
@@ -200,29 +206,54 @@ export default function NewConfig({ settings }) {
                     </div>
                 }
             >
-                <div className="p-5 grid grid-cols-2 items-center gap-3">
-                    <div className="text-sm " >
-                        Configuration Name
+                <div className="p-5 grid grid-cols-2 gap-3">
+                    <div className="text-sm">
+                        Name
                     </div>
                     <div>
                         <TextInput 
                             type='text'
-                            value={data.setting_name}
+                            value={data.name}
                             className="mt-1 block w-full"
-                            onChange={(e) => setData('setting_name', e.target.value)}
+                            onChange={(e) => setData('name', e.target.value)}
                         />
-                        <InputError message={errors.setting_name} className="mt-2" />
+                        <InputError message={errors.tax_name} className="mt-2" />
                     </div>
-                    <div className="text-sm " >
-                        Value
+                    <div className="text-sm">
+                        Amount
                     </div>
                     <div>
                         <TextInput 
                             type='number'
-                            value={data.value}
+                            value={data.amount}
                             min='1'
                             className="mt-1 block w-full"
-                            onChange={(e) => setData('value', e.target.value)}
+                            onChange={(e) => setData('amount', e.target.value)}
+                        />
+                        <InputError message={errors.value} className="mt-2" />
+                    </div>
+                    <div className="text-sm">
+                        Tax After
+                    </div>
+                    <div>
+                        <TextInput 
+                            type='number'
+                            value={data.tax_after}
+                            min='1'
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('tax_after', e.target.value)}
+                        />
+                        <InputError message={errors.value} className="mt-2" />
+                    </div>
+                    <div className="text-sm">
+                        Tax Type
+                    </div>
+                    <div>
+                        <TextInput 
+                            type='text'
+                            value={data.tax_type}
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('tax_type', e.target.value)}
                         />
                         <InputError message={errors.value} className="mt-2" />
                     </div>
@@ -232,7 +263,7 @@ export default function NewConfig({ settings }) {
             <Modal
                 isOpen={editOpen}
                 close={closeEditModal}
-                title='Edit Configuration'
+                title='Edit Tax'
                 closeIcon={<XIcon />}
                 maxWidth='md'
                 maxHeight='md'
@@ -250,7 +281,7 @@ export default function NewConfig({ settings }) {
                             size="sm"
                             className="flex justify-center"
                             type="submit"
-                            onClick={saveConfig}
+                            onClick={saveTax}
                             disabled={processing}
                         >
                             <span className="px-2">Save</span>
@@ -260,29 +291,54 @@ export default function NewConfig({ settings }) {
             >
                 <div className="p-5 grid grid-cols-2 items-center gap-3">
                     <div className="text-sm " >
-                        Configuration Name
+                        Name
                     </div>
                     <div>
                         <TextInput 
                             type='text'
-                            value={data.setting_name}
+                            value={data.name}
                             className="mt-1 block w-full"
-                            onChange={(e) => setData('setting_name', e.target.value)}
+                            onChange={(e) => setData('name', e.target.value)}
                         />
-                        <InputError message={errors.setting_name} className="mt-2" />
+                        <InputError message={errors.name} className="mt-2" />
                     </div>
                     <div className="text-sm " >
-                        Value
+                        Amount
                     </div>
                     <div>
                         <TextInput 
                             type='number'
-                            value={data.value}
+                            value={data.amount}
                             min='1'
                             className="mt-1 block w-full"
-                            onChange={(e) => setData('value', e.target.value)}
+                            onChange={(e) => setData('amount', e.target.value)}
                         />
-                        <InputError message={errors.value} className="mt-2" />
+                        <InputError message={errors.amount} className="mt-2" />
+                    </div>
+                    <div className="text-sm " >
+                        Tax After
+                    </div>
+                    <div>
+                        <TextInput 
+                            type='number'
+                            value={data.tax_after}
+                            min='1'
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('tax_after', e.target.value)}
+                        />
+                        <InputError message={errors.tax_after} className="mt-2" />
+                    </div>
+                    <div className="text-sm " >
+                        Tax Type
+                    </div>
+                    <div>
+                        <TextInput 
+                            type='text'
+                            value={data.tax_type}
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('tax_type', e.target.value)}
+                        />
+                        <InputError message={errors.tax_type} className="mt-2" />
                     </div>
                 </div>
             </Modal>
@@ -319,14 +375,12 @@ export default function NewConfig({ settings }) {
                                 size='sm'
                                 className="w-full flex justify-center font-sf-pro bg-[#0060FF]"
                             >Delete</Button>
-
+                            
                         </div>
                     </div>
                 )}
             />
-
-            
         </>
-        
     )
+
 }
