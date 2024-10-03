@@ -308,8 +308,8 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
                 close={closeEditProfile}
                 title='Edit Profile'
                 closeIcon={<XIcon />}
-                maxWidth='md'
-                maxHeight='md'
+                maxWidth='lg'
+                maxHeight='lg'
                 footer={
                     <div className="flex justify-end gap-5 ">
                         <Button

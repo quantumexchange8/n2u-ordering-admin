@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FetchDataController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TableController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Foundation\Application;
@@ -64,6 +66,15 @@ Route::middleware('auth')->group(function () {
 
      /**
      * ==============================
+     *           Table Listing
+     * ==============================
+     */
+    Route::prefix('table')->group(function () {
+        Route::get('/table-listing', [TableController::class, 'tableListing'])->name('table.table-listing');
+    });
+
+     /**
+     * ==============================
      *           Voucher Listing
      * ==============================
      */
@@ -93,6 +104,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    /**
+     * ==============================
+     *           Fetch Latest Data
+     * ==============================
+     */
+    Route::get('/fetch-customer', [FetchDataController::class, 'fetchCustomer']);
+
 });
 
 Route::get('/components/buttons', function () {

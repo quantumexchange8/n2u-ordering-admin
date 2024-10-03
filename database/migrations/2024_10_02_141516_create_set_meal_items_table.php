@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('set_meal_items', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('status');
-            $table->string('quick_key');
-            $table->string('contain_modify_grp_id');
-            $table->string('report_cat_id');
-            $table->string('description');
+            $table->unsignedBigInteger('set_meal_id');
+            $table->unsignedBigInteger('item_id');
+            $table->decimal('price', 13, 2)->default(0.00);
+            $table->string('sequence')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('set_meal_items');
     }
 };

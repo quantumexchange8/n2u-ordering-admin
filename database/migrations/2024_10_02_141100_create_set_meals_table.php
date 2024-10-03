@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('set_meals', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('status');
-            $table->string('quick_key');
-            $table->string('contain_modify_grp_id');
-            $table->string('report_cat_id');
-            $table->string('description');
+            $table->string('optional')->nullable();
+            $table->string('sequence')->nullable();
+            $table->string('description')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('set_meals');
     }
 };
