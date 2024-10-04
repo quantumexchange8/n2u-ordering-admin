@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Log;
 
 class FetchDataController extends Controller
 {
-    protected $apiKey;
+    // protected $apiKey;
 
     public function fetchCustomer()
     {
-        $this->apiKey = env('POS_token');
+        // $this->apiKey = env('POS_token');
+        $api = '6d6331e163cda5af33ed0829a35f1d6b94579735';
         $resource_type = 'Customer';
         $outlet = 'outlet1';
 
         $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
-            'api_token' => $this->apiKey,
+            'api_token' => $api,
             'resource_type' => $resource_type,
             'outlet' => $outlet,
         ]);
