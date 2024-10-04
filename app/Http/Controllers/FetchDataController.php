@@ -39,44 +39,19 @@ class FetchDataController extends Controller
                 
                 $user = User::whereRaw('RIGHT(phone_number, 9) = ?', [$normalizedPOSPhone])->orWhere('email', $customer['Email'])->first();
 
-                Log::debug('user', $user);
+                Log::debug('user', ['user' => $user]);
 
                 if ($user) {
-                    // $user->update([
-                    //     'sync' => 'yes',
-                    //     'customer_id' => $customer['idCustomer'],
-                    //     'existing_phone_pos' => $POS_phone,
-                    //     'dob' => $customer['Birthday'],
-                    //     'gender' => $customer['Gender'],
-                    //     'point' => $customer['RewardPoints'],
-                    //     'member_id' => $customer['CustomerCardID'],
-                    // ]);
+                    $user->update([
+                        'sync' => 'yes',
+                        'customer_id' => $customer['idCustomer'],
+                        'existing_phone_pos' => $POS_phone,
+                        'dob' => $customer['Birthday'],
+                        'gender' => $customer['Gender'],
+                        'point' => $customer['RewardPoints'],
+                        'member_id' => $customer['CustomerCardID'],
+                    ]);
                 }
-
-                // $user = User::create([
-                //     'name' => $customer['FirstName'],
-                //     'last_name' => $customer['LastName'],
-                //     'email' => $customer['Email'],
-                //     'role' => 'member',
-                //     'role_id' => RunningNumberService::getID('member'),
-                //     'member_id' => $customer['CustomerCardID'],
-                //     'dial_code' => $customer['FirstName'],
-                //     'phone' => $customer['Phone'],
-                //     'dob' => $customer['Birthday'],
-                //     'gender' => $customer['Gender'],
-                //     'point' => $customer['RewardPoints'],
-                //     'rank_id' => $customer['FirstName'],
-                //     'address1' => $customer['Address1'],
-                //     'address2' => $customer['Address2'],
-                //     'address3' => $customer['Address3'],
-                //     'city' => $customer['City'],
-                //     'state' => $customer['State'],
-                //     'zip' => $customer['Zip'],
-                //     'status' => $customer['FirstName'],
-                //     'branch' => $customer['FirstName'],
-                //     'remark' => $customer['FirstName'],
-                //     'created_at' => $customer['MemberSince'],
-                // ]);
             }
         }
 
