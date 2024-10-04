@@ -17,6 +17,9 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    //  Customer_id for pos PK id
+
     protected $guarded = ['id'];
 
     /**
