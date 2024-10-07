@@ -36,6 +36,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/member-details/{id}', [MemberController::class, 'memberDetails'])->name('member.memberDetails');
         Route::get('/getMemberDetails', [MemberController::class, 'getMemberDetails'])->name('member.getMemberDetails');
         Route::get('/getMemberJoined', [MemberController::class, 'getMemberJoined'])->name('member.getMemberJoined');
+        Route::get('/getUserDetails', [MemberController::class, 'getUserDetails'])->name('member.getUserDetails');
+        Route::get('/getUserTransaction', [MemberController::class, 'getUserTransaction'])->name('member.getUserTransaction');
+        Route::get('/getUserWallet', [MemberController::class, 'getUserWallet'])->name('member.getUserWallet');
 
         Route::post('/updateMemberWallet', [MemberController::class, 'updateMemberWallet'])->name('member.updateMemberWallet');
         Route::post('/updateMemberProfile', [MemberController::class, 'updateMemberProfile'])->name('member.updateMemberProfile');
@@ -110,7 +113,8 @@ Route::middleware('auth')->group(function () {
      *           Fetch Latest Data
      * ==============================
      */
-    Route::get('/fetch-customer', [FetchDataController::class, 'fetchCustomer']);
+    Route::post('/fetch-customer', [FetchDataController::class, 'fetchCustomer'])->name('fetch-customer');
+    Route::post('/syncUserDetails', [FetchDataController::class, 'syncUserDetails'])->name('syncUserDetails');
 
 });
 

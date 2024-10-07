@@ -27,6 +27,7 @@
         "primereact": "^10.8.2",
         "quill": "^2.0.2",
         "react-chartjs-2": "^5.2.0",
+        "react-countup": "^6.5.3",
         "react-hot-toast": "^2.4.1"
     }
 }

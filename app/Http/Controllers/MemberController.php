@@ -150,4 +150,26 @@ class MemberController extends Controller
 
         return redirect()->back();
     }
+
+    public function getUserDetails(Request $request)
+    {
+        $userDetails = User::find($request->user_id);
+        
+        return response()->json($userDetails);
+    }
+
+    public function getUserTransaction(Request $request)
+    {
+        $transaction = Transaction::where('user_id', $request->user_id)->with(['user:id,name'])->get();
+
+        return response()->json($transaction);
+    }
+
+    public function getUserWallet(Request $request)
+    {
+
+        $wallet = Wallet::where('user_id', $request->user_id)->get();
+
+        return response()->json($wallet);
+    }
 }

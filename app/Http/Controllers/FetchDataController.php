@@ -12,7 +12,7 @@ class FetchDataController extends Controller
 {
     // protected $apiKey;
 
-    public function fetchCustomer()
+    public function fetchCustomer(Request $request)
     {
         // $this->apiKey = env('POS_token');
         $api = '6d6331e163cda5af33ed0829a35f1d6b94579735';
@@ -34,12 +34,8 @@ class FetchDataController extends Controller
 
                 $POS_phone = $customer['Phone'];
                 $normalizedPOSPhone = $this->normalizePhoneNumber($POS_phone);
-
-                Log::debug('formatted', ['normalizedPOSPhone' => $normalizedPOSPhone]);
                 
                 $user = User::whereRaw('RIGHT(phone_number, 9) = ?', [$normalizedPOSPhone])->orWhere('email', $customer['Email'])->first();
-
-                Log::debug('user', ['user' => $user]);
 
                 if ($user) {
                     $user->update([
@@ -53,9 +49,50 @@ class FetchDataController extends Controller
                     ]);
                 }
             }
+        } else {
+            return redirect()->back()->with('error', 'Failed to fetch data');
         }
+        
+    }
 
-        return response()->json(['message' => 'Failed to fetch data'], 500);
+    public function syncUserDetails(Request $request)
+    {
+        $api = '6d6331e163cda5af33ed0829a35f1d6b94579735';
+        $resource_type = 'Customer';
+        $outlet = 'outlet1';
+
+        $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
+            'api_token' => $api,
+            'resource_type' => $resource_type,
+            'outlet' => $outlet,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            $customers = collect($data['result']['user_data']);
+
+            $filteredCustomer = $customers->where('idCustomer', $request->idCustomer)->first();
+            $user = User::find($request->id);
+            Log::debug('customer details', $filteredCustomer);
+
+            if ($filteredCustomer) {
+                $user->update([
+                    'customer_id' => $filteredCustomer['idCustomer'],
+                    'existing_phone_pos' => $filteredCustomer['Phone'],
+                    'dob' => $filteredCustomer['Birthday'],
+                    'gender' => $filteredCustomer['Gender'],
+                    'point' => $filteredCustomer['RewardPoints'],
+                    'status' => $filteredCustomer['Voided'],
+                ]);
+            } else {
+                // Handle case where customer is not found
+                Log::info('No customer found with idCustomer: ' . $request->idCustomer);
+            }
+
+        } else {
+            return redirect()->back()->with('error', 'Failed to fetch data');
+        }
     }
 
     private function normalizePhoneNumber($phone)

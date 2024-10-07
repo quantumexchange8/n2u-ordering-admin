@@ -3,20 +3,69 @@ import TextInput from "@/Components/TextInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React from "react";
 import MemberTransactionTable from "./MemberTransactionTable";
-import { EditIcon, XIcon } from "@/Components/Icon/Outline";
+import { EditIcon, SyncIcon, XIcon } from "@/Components/Icon/Outline";
 import { useState } from "react";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Button";
 import { useForm } from "@inertiajs/react";
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import { Skeleton } from 'primereact/skeleton';
+import CountUp from 'react-countup';
 
-export default function MemberDetails({ user, dineWallet, cashWallet, transaction }) {
+export default function MemberDetails({ user }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [editProfileOpen, setEditProfileOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshTable, setRefreshTable] = useState(false);
+    const [syncing, setSyncing] = useState(false);
+    const [userData, setUserData] = useState([]);
+    const [userWallet, setUserWallet] = useState([]);
+    const [dineWallet, setDineWallet] = useState(null);
+    const [cashWallet, setCashWallet] = useState(null);
+
+    const fetchData = async () => {
+        try {
+
+            const response = await axios.get('/member/getUserDetails', {
+                params: {
+                    user_id: user.id,
+                },
+            });
+            
+            setUserData(response.data);
+            
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchWalletData = async () => {
+        try {
+
+            const response = await axios.get('/member/getUserWallet', {
+                params: {
+                    user_id: user.id,
+                },
+            });
+            
+            setUserWallet(response.data);
+            
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        fetchWalletData();
+    }, []);
 
     const handleItemAdded = () => {
         setRefreshTable(prevState => !prevState);
@@ -42,8 +91,8 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
 
     const { data, setData, post, processing, errors, reset } = useForm({
         id: user.id,
-        dine_in_wallet: dineWallet.balance,
-        cash_wallet: cashWallet.balance,
+        dine_in_wallet: '',
+        cash_wallet: '',
         point_balance: user.point,
         point: "",
         name: user.name,
@@ -96,51 +145,169 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
             }
         });
     }
+
+    const SyncCustomer = async () => {
+
+        setSyncing(true);
+
+        try {
+
+            await axios.post('/syncUserDetails', {
+                params: {
+                    idCustomer: user.customer_id,
+                    id: user.customer_id,
+                },
+            });
+
+            toast.success('Sync successfully.', {
+                title: 'Sync successfully.',
+                duration: 3000,
+                variant: 'variant3',
+            });
+
+        } catch (error) {
+            console.error('Error updating status:', error);
+        } finally {
+            setSyncing(false); // Reset processing state after request completes
+        }
+    }
+
+    useEffect(() => {
+        userWallet.forEach(wallet => {
+            if (wallet.type === 'cash_wallet') {
+                setCashWallet(wallet);
+            } else if (wallet.type === 'dine_in_wallet') {
+                setDineWallet(wallet);
+            }
+        });
+    }, [userWallet]);
+
     return (
         <Authenticated
             header='Member Detail'
         >
             <div className="flex flex-col gap-5">
+                {
+                    user.customer_id !== null && (
+                        <div className="flex justify-end">
+                            <Button 
+                                size="sm" 
+                                iconOnly 
+                                className="flex items-center gap-2 py-2.5 px-4"
+                                onClick={SyncCustomer}
+                                disabled={syncing}
+                            >
+                                <SyncIcon className={`${syncing ? 'animate-spin' : ''}`}/>
+                                <span>Sync</span>
+                            </Button>
+                        </div>
+                    )
+                }
                 <div className="flex flex-col md:flex-row gap-5">
                     <div className="w-full flex flex-col gap-5">
-                        <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl grid g gap-3">
-                            <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1">
-                                <div className="text-neutral-900 text-base font-bold">Personal Details</div>
-                                <div className="cursor-pointer" onClick={() => editProfile(user)}>
-                                    <EditIcon />
+                        {
+                            userData.id != null ? (
+                                <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl grid g gap-3">
+                                    <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1">
+                                        <div className="flex items-center gap-2">
+                                            <div>
+                                                <img className='object-cover w-8 h-8 rounded-full' src='https://img.freepik.com/free-icon/user_318-159711.jpg' alt="merchant_pic" />
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-neutral-900 text-sm font-bold leading-none">{userData.name}</div>
+                                                <div className="text-neutral-900 text-xs font-bold leading-none">{userData.role_id ? userData.role_id : userData.member_id}</div>
+                                            </div>
+                                        </div>
+                                        <div className="cursor-pointer" onClick={() => editProfile(user)}>
+                                            <EditIcon />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 grid-rows-3 gap-3 px-1">
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Name</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.name}</div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Phone</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.dial_code}{user.phone}</div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Email</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.email ? user.email : '-'}</div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Rank</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.rank.name}</div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Upline</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.upline ? user.upline.name : '-'}</div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <div className="text-xs text-neutral-300">Status</div>
+                                            <div className="text-sm text-neutral-900 font-bold">{user.verify != null ? <div className="text-green-600">Verified</div> : <div className="text-red-600">Unverify</div>}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 grid-rows-3 gap-3 px-1">
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Name</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.name}</div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Phone</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.dial_code}{user.phone}</div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Email</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.email ? user.email : '-'}</div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Rank</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.rank.name}</div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Upline</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.upline ? user.upline.name : '-'}</div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Status</div>
-                                    <div className="text-sm text-neutral-900 font-bold">{user.verify != null ? <div className="text-green-600">Verified</div> : <div className="text-red-600">Unverify</div>}</div>
-                                </div>
-                            </div>
-                        </div>
+                            ) : (
+                                <>
+                                    {
+                                        isLoading ? (
+                                            <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl grid g gap-3">
+                                                <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <div>
+                                                            <Skeleton shape="circle" size="2rem" className="mr-2"></Skeleton>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <div className="text-neutral-900 text-sm font-bold leading-none"><Skeleton width="8rem" className="mb-1"></Skeleton></div>
+                                                            <div className="text-neutral-900 text-xs font-bold leading-none"><Skeleton width="8rem" className="mb-1"></Skeleton></div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="cursor-pointer" onClick={() => editProfile(user)}>
+                                                        <EditIcon />
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 grid-rows-3 gap-3 px-1">
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Name</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem" ></Skeleton></div>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Phone</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem" ></Skeleton></div>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Email</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem"></Skeleton></div>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Rank</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem" ></Skeleton></div>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Upline</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem" ></Skeleton></div>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="text-xs text-neutral-300">Status</div>
+                                                        <div className="text-sm text-neutral-900 font-bold"><Skeleton width="10rem" ></Skeleton></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl flex justify-center items-center gap-3">
+                                                Failed to load data
+                                            </div>
+                                        )
+                                    }
+                                </>
+                            )
+                        }
                     </div>
                     <div className="w-full flex flex-col gap-5">
                         <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl flex flex-col gap-3">
-                            <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1">
+                            <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1 h-[49px]">
                                 <div className="text-neutral-900 text-base font-bold">Wallet</div>
                                 <div className="cursor-pointer" onClick={() => changeWallet(user)}>
                                     <EditIcon />
@@ -149,14 +316,23 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
                             <div className="flex flex-col gap-3 px-1">
                                 <div className="flex flex-col">
                                     <div className="text-xs text-neutral-300">Dine In Credit Wallet</div>
-                                    <div className="text-sm text-neutral-900 font-bold">
-                                        RM {dineWallet.balance}
+                                    <div className="text-sm text-neutral-900 font-bold flex items-center gap-1">
+                                        <span>RM </span>
+                                        {
+                                            dineWallet && (
+                                                <CountUp end={dineWallet.balance} duration={2} decimals={2}/>
+                                            )
+                                        }
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="text-xs text-neutral-300">Cash Wallet Credit</div>
                                     <div className="text-sm text-neutral-900 font-bold">
-                                        RM {cashWallet.balance}
+                                        RM  {
+                                                cashWallet && (
+                                                    <CountUp end={cashWallet.balance} duration={2} decimals={2}/>
+                                                )
+                                            }
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
@@ -167,29 +343,12 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl flex flex-col gap-3">
-                            <div className="flex justify-between items-center border-b border-neutral-200 py-2 px-1">
-                                <div className="text-neutral-900 text-base font-bold">Points</div>
-                                <div className="cursor-pointer" onClick={() => changeWallet(user)}>
-                                    <EditIcon />
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-3 px-1">
-                                <div className="flex flex-col">
-                                    <div className="text-xs text-neutral-300">Points</div>
-                                    <div className="text-sm text-neutral-900 font-bold">
-                                        {user.point} pts
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
 
                 <div className="w-full p-4 shadow-container bg-white md:shadow-container rounded-xl flex flex-col gap-3">
                     <MemberTransactionTable 
                         user={user}
-                        transaction={transaction}
                     />
                 </div>
             </div>

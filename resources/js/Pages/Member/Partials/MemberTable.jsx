@@ -1,4 +1,4 @@
-import { DeleteIcon, EditIcon } from "@/Components/Icon/Outline";
+import { DeleteIcon, EditIcon, SyncIcon } from "@/Components/Icon/Outline";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -21,6 +21,7 @@ export default function MemberTable() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [processing, setProcessing] = useState(false);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
@@ -128,20 +129,54 @@ export default function MemberTable() {
         setGlobalFilterValue(value);
     };
 
+    const SyncCustomer = async () => {
+
+        setProcessing(true);
+
+        try {
+
+            await axios.post('/fetch-customer');
+
+            toast.success('Sync successfully.', {
+                title: 'Sync successfully.',
+                duration: 3000,
+                variant: 'variant3',
+            });
+
+        } catch (error) {
+            console.error('Error updating status:', error);
+        } finally {
+            setProcessing(false); // Reset processing state after request completes
+        }
+    }
 
     const renderHeader = () => {
         return (
-            <div className="flex justify-content-end">
-                <IconField iconPosition="left">
-                    <InputIcon className="pi pi-search" />
-                    <TextInput 
-                        value={globalFilterValue} 
-                        onChange={onGlobalFilterChange} 
-                        placeholder="Keyword Search"
-                        withIcon
-                        className='font-medium'
-                    />
-                </IconField>
+            <div className="flex justify-between">
+                <div>
+                    <IconField iconPosition="left">
+                        <InputIcon className="pi pi-search" />
+                        <TextInput 
+                            value={globalFilterValue} 
+                            onChange={onGlobalFilterChange} 
+                            placeholder="Keyword Search"
+                            withIcon
+                            className='font-medium'
+                        />
+                    </IconField>
+                </div>
+                <div>
+                    <Button 
+                        size="sm" 
+                        iconOnly 
+                        className="flex items-center gap-2 p-2.5"
+                        onClick={SyncCustomer}
+                        disabled={processing}
+                    >
+                        <SyncIcon className={`${processing ? 'animate-spin' : ''}`}/>
+                        <span>Sync Customer</span>
+                    </Button>
+                </div>
             </div>
         );
     };
@@ -153,7 +188,15 @@ export default function MemberTable() {
         return (
             <div className="flex flex-col">
                 {
-                    details.status === '0' ? <Active /> : <Inactive />
+                    details.status === '0' ? (
+                        <div>
+                            <Active />
+                        </div>
+                    ) : (
+                        <div>
+                            <Inactive />
+                        </div>
+                    )
                 }
             </div>
         )

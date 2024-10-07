@@ -10,18 +10,42 @@ import { InputIcon } from 'primereact/inputicon';
 import { InputText } from 'primereact/inputtext';
 import TextInput from "@/Components/TextInput";
 import { Pending, Rejected, Success } from "@/Components/Badge";
+import { useEffect } from "react";
 
-export default function MemberTransactionTable({ user, transaction }) {
+export default function MemberTransactionTable({ user }) {
 
     const [selectedTab, setSelectedTab] = useState('Deposit');
 
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [transaction, setTransaction] = useState([]);
     const filteredData = transaction.filter(item => item.transaction_type === selectedTab);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
     });
+
+    const fetchData = async () => {
+        try {
+
+            const response = await axios.get('/member/getUserTransaction', {
+                params: {
+                    user_id: user.id,
+                },
+            });
+            
+            setTransaction(response.data);
+            
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const NameTemplate = (details) => {
         
@@ -55,17 +79,23 @@ export default function MemberTransactionTable({ user, transaction }) {
             <div className="flex flex-col">
                 {
                     details.status === 'pending' && (
-                        <Pending />
+                        <div>
+                            <Pending />
+                        </div>
                     )
                 }
                 {
                     details.status === 'success' && (
-                        <Success />
+                        <div>
+                            <Success />
+                        </div>
                     )
                 }
                 {
                     details.status === 'rejected' && (
-                        <Rejected />
+                        <div>
+                            <Rejected />
+                        </div>
                     )
                 }
             </div>
