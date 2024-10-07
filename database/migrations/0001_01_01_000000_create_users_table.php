@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('zip')->nullable();
             $table->string('status')->default(0);
+            $table->string('void')->default(0);
             $table->string('branch')->nullable();
             $table->string('remark')->nullable();
             $table->softDeletes();

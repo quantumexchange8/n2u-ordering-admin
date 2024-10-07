@@ -46,9 +46,18 @@ class FetchDataController extends Controller
                         'gender' => $customer['Gender'],
                         'point' => $customer['RewardPoints'],
                         'member_id' => $customer['CustomerCardID'],
+                        'address1' => $customer['Address1'],
+                        'address2' => $customer['Address2'],
+                        'address3' => $customer['Address3'],
+                        'city' => $customer['City'],
+                        'state' => $customer['State'],
+                        'zip' => $customer['Zip'],
+                        'voided' => $customer['Voided'],
+                        'joined_date' => $customer['MemberSince'],
+                        'expired_date' => $customer['MemberExpiry'],
                     ]);
                 }
-            }
+        }
         } else {
             return redirect()->back()->with('error', 'Failed to fetch data');
         }
@@ -74,7 +83,7 @@ class FetchDataController extends Controller
 
             $filteredCustomer = $customers->where('idCustomer', $request->idCustomer)->first();
             $user = User::find($request->id);
-            Log::debug('customer details', $filteredCustomer);
+            Log::debug('customer details', ['filteredCustomer' => $filteredCustomer]);
 
             if ($filteredCustomer) {
                 $user->update([
@@ -83,7 +92,16 @@ class FetchDataController extends Controller
                     'dob' => $filteredCustomer['Birthday'],
                     'gender' => $filteredCustomer['Gender'],
                     'point' => $filteredCustomer['RewardPoints'],
-                    'status' => $filteredCustomer['Voided'],
+                    'voided' => $filteredCustomer['Voided'],
+                    'address1' => $filteredCustomer['Address1'],
+                    'address2' => $filteredCustomer['Address2'],
+                    'address3' => $filteredCustomer['Address3'],
+                    'city' => $filteredCustomer['City'],
+                    'state' => $filteredCustomer['State'],
+                    'zip' => $filteredCustomer['Zip'],
+                    'voided' => $filteredCustomer['Voided'],
+                    'joined_date' => $filteredCustomer['MemberSince'],
+                    'expired_date' => $filteredCustomer['MemberExpiry'],
                 ]);
             } else {
                 // Handle case where customer is not found
