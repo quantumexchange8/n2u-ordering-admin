@@ -64,4 +64,20 @@ const Processing = () => {
     );
 }
 
-export { Admin, Merchant, Success, Rejected, Expired, Pending, Freeze, Processing };
+const Active = () => {
+    return (
+        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-success-500 bg-success-500'>
+            <span className='text-white text-xs font-medium leading-tight'>Active</span>
+        </div>
+    );
+}
+
+const Inactive = () => {
+    return (
+        <div className='flex md:inline-flex px-3 py-0.5 justify-center items-center border rounded-[100px] border-error-500 bg-error-500'>
+            <span className='text-white text-xs font-medium leading-tight'>Inactive</span>
+        </div>
+    );
+}
+
+export { Admin, Merchant, Success, Rejected, Expired, Pending, Freeze, Processing, Active, Inactive };

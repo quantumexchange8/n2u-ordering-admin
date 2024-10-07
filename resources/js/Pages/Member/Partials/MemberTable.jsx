@@ -1,4 +1,4 @@
-import { EditIcon } from "@/Components/Icon/Outline";
+import { DeleteIcon, EditIcon } from "@/Components/Icon/Outline";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -11,6 +11,10 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import TextInput from "@/Components/TextInput";
+import toast from "react-hot-toast";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Active, Inactive } from "@/Components/Badge";
+
 
 export default function MemberTable() {
 
@@ -21,6 +25,8 @@ export default function MemberTable() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
     });
+    const [selectedId, setSelectedId] = useState(null);
+    const [refreshTable, setRefreshTable] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -41,13 +47,17 @@ export default function MemberTable() {
     }, []);
 
     const ActionTemplate = (details) => {
+
         return (
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center gap-3">
                 <Link href={`/member/member-details/${details.id}`}>
                     <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" >
                         <EditIcon />
                     </div>
                 </Link>
+                <div className="hover:rounded-full hover:bg-neutral-100 p-1 cursor-pointer" onClick={() => DeleteModal(details.id)} >
+                    <DeleteIcon />
+                </div>
             </div>
         );
     };
@@ -137,6 +147,59 @@ export default function MemberTable() {
     };
 
     const header = renderHeader();
+
+    const StatusTemplate = (details) => {
+        
+        return (
+            <div className="flex flex-col">
+                {
+                    details.status === '0' ? <Active /> : <Inactive />
+                }
+            </div>
+        )
+    }
+
+    const handleItemAdded = () => {
+        setRefreshTable(prevState => !prevState);
+    }
+
+    const DeleteModal = (details) => {
+        setSelectedId(details)
+        confirmDialog({
+            group: 'delete',
+            message: 'Are you sure you want to Delete this user?',
+            header: 'Delete',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            accept: confirmDelete,
+            reject: rejectDelete,
+            
+        });
+    }
+    
+
+    const confirmDelete = async () => {
+        try {
+            await axios.post('/member/deleteMember', {       
+                id:selectedId,
+            });
+           
+            handleItemAdded();
+
+            toast.success('Approved.', {
+                title: 'Approved.',
+                duration: 3000,
+                variant: 'variant3',
+            });
+            
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    }
+
+    const rejectDelete = () => {
+        
+    }
     
     return (
         <div className="flex flex-col">
@@ -152,6 +215,7 @@ export default function MemberTable() {
                     <Column field="dob" header="Date or Birth" body={DobTemplate} style={{ minWidth: '80px' }}></Column> */}
                     <Column field="rank" header="Ranking" body={RankingTemplate} style={{ minWidth: '80px' }} sortable></Column>
                     <Column field="created_at" header="Joined Date" body={JoinedTemplate} style={{ minWidth: '80px' }} sortable></Column>
+                    <Column field="status" header="Status" body={StatusTemplate} style={{ maxWidth: '70px'}}></Column>
                     <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
                 </DataTable>
             </div>
@@ -175,6 +239,44 @@ export default function MemberTable() {
                 </div>
             )
         }
+
+            <ConfirmDialog 
+                group="delete"
+                content={({ headerRef, contentRef, footerRef, hide, message }) => (
+                    <div className="relative flex flex-col gap-6 items-center p-5 rounded-lg max-w-[300px] bg-white">
+                        <div></div>
+                        <div className='flex flex-col gap-3 items-center'>
+                            <div className="font-bold text-lg text-neutral-950 font-sf-pro select-none" ref={headerRef}>
+                                {message.header}
+                            </div>
+                            <div className='text-neutral-950 text-base font-sf-pro text-center select-none' ref={contentRef}>
+                                {message.message}
+                            </div>
+                        </div>
+                        <div className="w-full flex items-center gap-2 " ref={footerRef}>
+                            <Button
+                                onClick={(event) => {
+                                    hide(event);
+                                    rejectDelete();
+                                }}
+                                size='sm'
+                                variant='white'
+                                className="w-full flex justify-center font-sf-pro"
+                            >Cancel</Button>
+                            <Button
+                                onClick={(event) => {
+                                    hide(event);
+                                    confirmDelete();
+                                }}
+                                variant="red"
+                                size='sm'
+                                className="w-full flex justify-center font-sf-pro bg-[#0060FF]"
+                            >Delete</Button>
+                        </div>
+                    </div>
+                )}
+            />
         </div>
+        
     )
 }

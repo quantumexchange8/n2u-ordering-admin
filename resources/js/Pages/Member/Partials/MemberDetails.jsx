@@ -49,6 +49,16 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
         name: user.name,
         phone: user.dial_code + user.phone,
         email: user.email,
+        dob: user.dob,
+        gender: user.gender,
+        member_id: user.member_id,
+        address1: user.address1,
+        address2: user.address2,
+        address3: user.address3,
+        city: user.city,
+        state: user.state,
+        zip: user.zip,
+        
     });
 
     const saveWallet = (e) => {
@@ -90,7 +100,6 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
         <Authenticated
             header='Member Detail'
         >
-
             <div className="flex flex-col gap-5">
                 <div className="flex flex-col md:flex-row gap-5">
                     <div className="w-full flex flex-col gap-5">
@@ -332,50 +341,159 @@ export default function MemberDetails({ user, dineWallet, cashWallet, transactio
                     </div>
                 }
             >
-                <div className="grid grid-cols-2 px-5 py-3 gap-5">
-                    <div className="flex flex-col space-y-1">
+                <div className="grid grid-cols-6 px-5 py-3 gap-5">
+                    <div className="flex flex-col space-y-1 col-span-3">
                         <div className="text-xs text-neutral-300">Name</div>
                         <div className="text-sm text-neutral-900">
                             <TextInput 
                                 type='text'
-                                value={data.name}
+                                value={data.name || ""}
                                 className="mt-1 block w-full"
                                 onChange={(e) => setData('name', e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col space-y-1">
-                        <div className="text-xs text-neutral-300">Phone</div>
+                    <div className="flex flex-col space-y-1 col-span-3">
+                        <div className="text-xs text-neutral-300 col-span-3">Phone</div>
                         <div className="text-sm text-neutral-900">
                             <TextInput 
                                 type='text'
-                                value={data.phone}
+                                value={data.phone || ""}
                                 className="mt-1 block w-full"
                                 onChange={(e) => setData('phone', e.target.value)}
                                 disabled={true}
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1 col-span-3">
                         <div className="text-xs text-neutral-300">Email</div>
                         <div className="text-sm text-neutral-900">
                             <TextInput 
                                 type='email'
-                                value={data.email}
+                                value={data.email || ""}
                                 className="mt-1 block w-full"
                                 onChange={(e) => setData('email', e.target.value)}
                                 disabled={false}
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col space-y-1">
+                    <div className="flex flex-col space-y-1 col-span-3">
                         <div className="text-xs text-neutral-300">Rank</div>
                         <div className="text-sm text-neutral-900">
                             <TextInput 
                                 type='text'
-                                value={user.rank.name}
+                                value={user.rank.name || ""}
                                 className="mt-1 block w-full"
                                 disabled={true}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Date of Birth</div>
+                        <div className="text-sm text-neutral-900">
+                        <TextInput 
+                                type='date'
+                                value={data.dob || ""}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('dob', e.target.value)}
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Gender</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.gender || ""}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('gender', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Member Code</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.member_id || ""}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('member_id', e.target.value)}
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Address</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.address1 || ""}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('address1', e.target.value)}
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Address 2</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.address2 || ""}
+                                onChange={(e) => setData('address2', e.target.value)}
+                                className="mt-1 block w-full"
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Address 3</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.address3 || ""}
+                                onChange={(e) => setData('address3', e.target.value)}
+                                className="mt-1 block w-full"
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">City</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.city || ""}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData('city', e.target.value)}
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">State</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                                type='text'
+                                value={data.state || ""}
+                                onChange={(e) => setData('state', e.target.value)}
+                                className="mt-1 block w-full"
+                                disabled={false}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-1 col-span-2">
+                        <div className="text-xs text-neutral-300">Zip</div>
+                        <div className="text-sm text-neutral-900">
+                            <TextInput 
+                               type='text'
+                               value={data.zip || ""}
+                               className="mt-1 block w-full"
+                               onChange={(e) => setData('zip', e.target.value)}
+                               disabled={false} 
                             />
                         </div>
                     </div>

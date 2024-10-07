@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/updateMemberWallet', [MemberController::class, 'updateMemberWallet'])->name('member.updateMemberWallet');
         Route::post('/updateMemberProfile', [MemberController::class, 'updateMemberProfile'])->name('member.updateMemberProfile');
-        
+        Route::post('/deleteMember', [MemberController::class, 'deleteMember'])->name('member.deleteMember');
      });
 
      /**

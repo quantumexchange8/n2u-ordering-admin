@@ -111,7 +111,42 @@ class MemberController extends Controller
 
     public function updateMemberProfile(Request $request)
     {
-        // dd($request->all());
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',  
+            ],            
+        ]);
+        
+        $user = User::find($request->id);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'dob' => $request->dob,
+            'gender' => $request->gender,
+            'member_id' => $request->member_id,
+            'address1' => $request->address1,
+            'address2' => $request->address2,
+            'address3' => $request->address3,
+            'city' => $request->city,
+            'state' => $request->state,
+            'zip' => $request->zip,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteMember(Request $request)
+    {
+        $user = User::find($request->id);
+        $user->delete();
 
         return redirect()->back();
     }
