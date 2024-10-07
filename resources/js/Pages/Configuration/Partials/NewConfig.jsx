@@ -10,6 +10,12 @@ import toast from "react-hot-toast";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Dropdown } from 'primereact/dropdown';
+
+const settingType = [
+    { value: 'amount'},
+    { value: 'percentage'},
+]
 
 export default function NewConfig({ settings }) {
     
@@ -24,6 +30,7 @@ export default function NewConfig({ settings }) {
         id: '',
         setting_name: '',
         value: '',
+        type: '',
     });
 
     const handleItemAdded = () => {
@@ -64,6 +71,7 @@ export default function NewConfig({ settings }) {
             id: setting.id || '',     // Set the id if exists
             setting_name: setting.setting_name || '', // Set the name if exists
             value: setting.value || '', // Set the value if exists
+            type: setting.type || '',
         });
     }
 
@@ -163,6 +171,7 @@ export default function NewConfig({ settings }) {
                         </div>
                         <DataTable value={settings} tableStyle={{ minWidth: '160px' }}>
                             <Column field="setting_name" header="Name" style={{ minWidth: '70px'}}></Column>
+                            <Column field="type" header="Type" style={{ minWidth: '70px' }}></Column>
                             <Column field="value" header="Amount" style={{ minWidth: '70px' }}></Column>
                             <Column header="" body={ActionTemplate} style={{ minWidth: '20px' }}></Column>
                         </DataTable>
@@ -213,6 +222,25 @@ export default function NewConfig({ settings }) {
                         />
                         <InputError message={errors.setting_name} className="mt-2" />
                     </div>
+                    <div className="text-sm " >
+                        Type
+                    </div>
+                    <div>
+                        <Dropdown 
+                            value={data.type} 
+                            onChange={(e) => {
+                                setData('type', e.target.value); 
+                            }} 
+                            options={settingType} 
+                            optionLabel="value" 
+                            placeholder="Type" 
+                            className="w-full rounded-lg border border-neutral-100" 
+                            pt={{
+                                input: 'bg-transparent'
+                            }}
+                        />
+                        <InputError message={errors.setting_type} className="mt-2" />
+                    </div> 
                     <div className="text-sm " >
                         Value
                     </div>
@@ -270,6 +298,25 @@ export default function NewConfig({ settings }) {
                             onChange={(e) => setData('setting_name', e.target.value)}
                         />
                         <InputError message={errors.setting_name} className="mt-2" />
+                    </div>
+                    <div className="text-sm " >
+                        Type
+                    </div>
+                    <div>
+                    <Dropdown 
+                            value={data.type} 
+                            onChange={(e) => {
+                                setData('type', e.target.value); 
+                            }} 
+                            options={settingType} 
+                            optionLabel="value" 
+                            placeholder="Type" 
+                            className="w-full rounded-lg border border-neutral-100" 
+                            pt={{
+                                input: 'bg-transparent'
+                            }}
+                        />
+                        <InputError message={errors.value} className="mt-2" />
                     </div>
                     <div className="text-sm " >
                         Value

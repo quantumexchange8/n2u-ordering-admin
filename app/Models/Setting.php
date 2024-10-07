@@ -14,5 +14,6 @@ class Setting extends Model
         'setting_name',
         'name',
         'value',
+        'type',
     ];
 }

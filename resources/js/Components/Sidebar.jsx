@@ -8,6 +8,9 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon } from "./Icon/Outline";
 import { useState } from "react";
 import { useEffect } from "react";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { LogoutImg } from "./Icon/Brand";
+import Button from "./Button";
 
 export default function SideBar({ user, showingNavigationDropdown, expanded, toggleSidebar }) {
 
@@ -17,7 +20,23 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
     const { datas, setData, post, processing, reset } = useForm({});
 
     const logout = () => {
+        confirmDialog ({
+            group: 'Logout',
+            message: "We hope you enjoyed your time with us! If you log out now, you’ll need to sign back in to access your account. Do you still want to log out?",
+            header: "Are you sure you want to log out?",
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            accept: confirmLogout,
+            reject: cancelLogout,
+        });
+    }
+
+    const confirmLogout = () => {
         post(route('logout'));
+    }
+
+    const cancelLogout = () => {
+
     }
 
     const walletDropDown = () => {
@@ -307,6 +326,44 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                     </div>
                 </nav>
             </aside>
+            <ConfirmDialog 
+                group="Logout"
+                content={({ headerRef, contentRef, footerRef, hide, message }) => (
+                    <div className="relative flex flex-col gap-6 items-center p-5 rounded-lg border border-primary-200 max-w-[336px] bg-white">
+                        <div>
+                            <LogoutImg />
+                        </div>
+                        <div className='flex flex-col gap-3 items-center'>
+                            <div className="font-bold text-center text-base text-neutral-900 font-sf-pro select-none" ref={headerRef}>
+                                {message.header}
+                            </div>
+                            <div className='text-neutral-500 text-xs font-sf-pro text-center select-none' ref={contentRef}>
+                                {message.message}
+                            </div>
+                        </div>
+                        <div className="w-full flex items-center gap-2 " ref={footerRef}>
+                            <Button
+                                onClick={(event) => {
+                                    hide(event);
+                                    cancelLogout();
+                                }}
+                                size='sm'
+                                variant='white'
+                                className="w-full flex justify-center font-sf-pro"
+                            >Cancel</Button>
+                            <Button
+                                onClick={(event) => {
+                                    hide(event);
+                                    confirmLogout();
+                                }}
+                                variant="red"
+                                size='sm'
+                                className="w-full flex justify-center font-sf-pro"
+                            >Log Out</Button>
+                        </div>
+                    </div>
+                )}
+            />
         </>
     )
 }

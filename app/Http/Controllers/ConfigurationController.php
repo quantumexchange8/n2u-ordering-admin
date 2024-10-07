@@ -42,6 +42,7 @@ class ConfigurationController extends Controller
         $setting = Setting::create([
             'setting_name' => $request->setting_name,
             'value' => $request->value,
+            'type' => $request->type,
         ]);
 
         return redirect()->back();
@@ -70,6 +71,7 @@ class ConfigurationController extends Controller
         $setting->update([
             'setting_name' => $request->setting_name,
             'value' => $request->value,
+            'type' => $request->type,
         ]);
 
         return redirect()->back();
