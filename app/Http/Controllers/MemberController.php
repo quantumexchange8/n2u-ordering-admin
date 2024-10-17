@@ -9,6 +9,7 @@ use App\Models\Wallet;
 use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class MemberController extends Controller
@@ -59,51 +60,153 @@ class MemberController extends Controller
     public function updateMemberWallet(Request $request)
     {
         
+        $request->validate([
+            'wallet_type' => ['required'],
+            'bal_type' => ['required'],
+        ]);
+
         $user = User::find($request->id);
         $cashWallet = Wallet::where('type', 'cash_wallet')->where('user_id', $user->id)->first();
         $dineWallet = Wallet::where('type', 'dine_in_wallet')->where('user_id', $user->id)->first();
         $oldBalance = $dineWallet->balance;
+        $oldCashBalance = $cashWallet->balance;
+        $oldPointBal = $user->point;
 
-        if ($request->dine_in_wallet !== $dineWallet->balance) {
-            
-            $dineWallet->update([
-                'balance' => $request->dine_in_wallet,
+        if ($request->wallet_type === 'Dine In Wallet') {
+            $request->validate([
+                'amount' => ['required', 'numeric', 'min:1'],
             ]);
 
-            $transaction = Transaction::create([
-                'user_id' => $user->id,
-                'transaction_type' => 'Deposit',
-                'wallet' => 'dine_in_wallet',
-                'amount' => $dineWallet->balance - $oldBalance,
-                'transaction_number' => RunningNumberService::getID('transaction'),
-                'payment_type' => 'manual',
-                'status' => 'success',
-                'handle_by' => Auth::user()->id,
-                'remark' => 'Admin deposit',
-                'transaction_date' => now(),
-            ]);
+            if ($request->bal_type === 'Deposit') {
+                $dineWallet->update([
+                    'balance' => $dineWallet->balance += $request->amount,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'transaction_type' => 'Adjustment',
+                    'adjustment_type' => $request->bal_type,
+                    'wallet' => 'dine_in_wallet',
+                    'old_balance' => $oldBalance,
+                    'amount' => $request->amount,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'payment_type' => 'manual',
+                    'status' => 'success',
+                    'handle_by' => Auth::user()->id,
+                    'remark' => 'Admin adjustment',
+                    'transaction_date' => now(),
+                ]);
+            }
+
+            if ($request->bal_type === 'Withdrawal') {
+                $dineWallet->update([
+                    'balance' => $dineWallet->balance -= $request->amount,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'transaction_type' => 'Adjustment',
+                    'adjustment_type' => $request->bal_type,
+                    'wallet' => 'dine_in_wallet',
+                    'old_balance' => $oldBalance,
+                    'amount' => $request->amount,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'payment_type' => 'manual',
+                    'status' => 'success',
+                    'handle_by' => Auth::user()->id,
+                    'remark' => 'Admin adjustment',
+                    'transaction_date' => now(),
+                ]);
+            }
         }
 
-        if ($request->cash_wallet != $cashWallet->balance) {
-            $cashWallet->update([
-                'balance' => $request->cash_wallet,
+        if ($request->wallet_type === 'Credit Wallet') {
+            $request->validate([
+                'amount' => ['required', 'numeric', 'min:1'],
             ]);
+
+            if ($request->bal_type === 'Deposit') {
+                $cashWallet->update([
+                    'balance' => $cashWallet->balance += $request->amount,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'transaction_type' => 'Adjustment',
+                    'adjustment_type' => $request->bal_type,
+                    'wallet' => 'cash_wallet',
+                    'old_balance' => $oldBalance,
+                    'amount' => $request->amount,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'payment_type' => 'manual',
+                    'status' => 'success',
+                    'handle_by' => Auth::user()->id,
+                    'remark' => 'Admin adjustment',
+                    'transaction_date' => now(),
+                ]);
+            }
+
+            if ($request->bal_type === 'Withdrawal') {
+                $cashWallet->update([
+                    'balance' => $cashWallet->balance -= $request->amount,
+                ]);
+
+                $transaction = Transaction::create([
+                    'user_id' => $user->id,
+                    'transaction_type' => 'Adjustment',
+                    'adjustment_type' => $request->bal_type,
+                    'wallet' => 'cash_wallet',
+                    'old_balance' => $oldBalance,
+                    'amount' => $request->amount,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'payment_type' => 'manual',
+                    'status' => 'success',
+                    'handle_by' => Auth::user()->id,
+                    'remark' => 'Admin adjustment',
+                    'transaction_date' => now(),
+                ]);
+            }
         }
 
-        if ($request->point != null) {
-
-            $user->point += $request->point;
-            $user->save();
-
-            $pointLog = PointLog::create([
-                'user_id' => $user->id,
-                'type' => 'earned',
-                'amount' => $request->point,
-                'earning_point' => $request->point,
-                'old_point' => $request->point_balance,
-                'new_point' => $user->point,
+        if ($request->wallet_type === 'Point') {
+            $request->validate([
+                'point' => ['required', 'numeric', 'min:1'],
             ]);
-            
+
+            if ($request->bal_type === "Deposit") {
+                
+                $user->point += $request->point;
+                $user->save();
+
+                $pointLog = PointLog::create([
+                    'user_id' => $user->id,
+                    'type' => 'adjustment',
+                    'amount' => $request->point,
+                    'earning_point' => $request->point,
+                    'old_point' => $oldPointBal,
+                    'new_point' => $user->point,
+                    'remark' => 'admin adjustment',
+                    'adjust_type' => $request->bal_type,
+                ]);
+
+            }
+
+            if ($request->bal_type === "Withdrawal") {
+                
+                $user->point -= $request->point;
+                $user->save();
+
+                $pointLog = PointLog::create([
+                    'user_id' => $user->id,
+                    'type' => 'adjustment',
+                    'amount' => $request->point,
+                    'earning_point' => $request->point,
+                    'old_point' => $oldPointBal,
+                    'new_point' => $user->point,
+                    'remark' => 'admin adjustment',
+                    'adjust_type' => $request->bal_type,
+                ]);
+            }
         }
 
         return redirect()->back();
@@ -171,5 +274,21 @@ class MemberController extends Controller
         $wallet = Wallet::where('user_id', $request->user_id)->get();
 
         return response()->json($wallet);
+    }
+
+    public function updateMemberPassword(Request $request)
+    {
+
+        $request->validate([
+            'password' => ['required', 'confirmed'],
+        ]);
+
+        $user = User::find($request->id);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->back();
     }
 }

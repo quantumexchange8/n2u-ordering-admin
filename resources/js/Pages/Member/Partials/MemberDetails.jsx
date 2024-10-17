@@ -3,29 +3,46 @@ import TextInput from "@/Components/TextInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import React from "react";
 import MemberTransactionTable from "./MemberTransactionTable";
-import { EditIcon, SyncIcon, XIcon } from "@/Components/Icon/Outline";
+import { EditIcon, KeyIcon, SyncIcon, XIcon } from "@/Components/Icon/Outline";
 import { useState } from "react";
 import Modal from "@/Components/Modal";
 import Button from "@/Components/Button";
-import { useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { Skeleton } from 'primereact/skeleton';
 import CountUp from 'react-countup';
+import { Calendar } from 'primereact/calendar';
+import InputError from "@/Components/InputError";
+import { Dropdown } from 'primereact/dropdown';
 
-export default function MemberDetails({ user }) {
+export default function MemberDetails({ user, cashWallet, dineWallet }) {
+
+    const walletType = [
+        { name: 'Dine In Wallet' },
+        { name: 'Credit Wallet' },
+        { name: 'Point' },
+    ];
+
+    const balanceType = [
+        { name: 'Deposit' },
+        { name: 'Withdrawal' },
+    ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [editProfileOpen, setEditProfileOpen] = useState(false);
+    const [editPasswordOpen, setEditPasswordOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshTable, setRefreshTable] = useState(false);
     const [syncing, setSyncing] = useState(false);
     const [userData, setUserData] = useState([]);
     const [userWallet, setUserWallet] = useState([]);
-    const [dineWallet, setDineWallet] = useState(null);
-    const [cashWallet, setCashWallet] = useState(null);
-
+    // const [dineWallet, setDineWallet] = useState(null);
+    // const [cashWallet, setCashWallet] = useState(null);
+    const [selectedWalletType, setSelectedWalletType] = useState(null);
+    const [selectedBalType, setSelectedBalType] = useState(null);
+    
     const fetchData = async () => {
         try {
 
@@ -44,27 +61,26 @@ export default function MemberDetails({ user }) {
         }
     };
 
-    const fetchWalletData = async () => {
-        try {
+    // const fetchWalletData = async () => {
+    //     try {
 
-            const response = await axios.get('/member/getUserWallet', {
-                params: {
-                    user_id: user.id,
-                },
-            });
+    //         const response = await axios.get('/member/getUserWallet', {
+    //             params: {
+    //                 user_id: user.id,
+    //             },
+    //         });
             
-            setUserWallet(response.data);
+    //         setUserWallet(response.data);
             
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     useEffect(() => {
         fetchData();
-        fetchWalletData();
     }, []);
 
     const handleItemAdded = () => {
@@ -77,6 +93,8 @@ export default function MemberDetails({ user }) {
 
     const closeWallet = () => {
         setIsOpen(false)
+        setSelectedWalletType(null)
+        setSelectedBalType(null)
         reset()
     }
 
@@ -89,6 +107,15 @@ export default function MemberDetails({ user }) {
         reset()
     }
 
+    const editPassword = (user) => {
+        setEditPasswordOpen(true)
+    }
+
+    const closeEditPassword = () => {
+        setEditPasswordOpen(false)
+        reset()
+    }
+
     const { data, setData, post, processing, errors, reset } = useForm({
         id: user.id,
         dine_in_wallet: '',
@@ -98,7 +125,7 @@ export default function MemberDetails({ user }) {
         name: user.name,
         phone: user.dial_code + user.phone,
         email: user.email,
-        dob: user.dob,
+        dob: user.dob ? new Date(user.dob) : null,
         gender: user.gender,
         member_id: user.member_id,
         role_id: user.role_id,
@@ -108,7 +135,10 @@ export default function MemberDetails({ user }) {
         city: user.city,
         state: user.state,
         zip: user.zip,
-        
+        password: '',
+        password_confirmation: '',
+        wallet_type: '',
+        bal_type: '',
     });
 
     const saveWallet = (e) => {
@@ -147,6 +177,24 @@ export default function MemberDetails({ user }) {
         });
     }
 
+    const updateNewPassword = (e) => {
+        e.preventDefault();
+        post('/member/updateMemberPassword', {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsLoading(false);
+                reset();
+                handleItemAdded();
+                closeEditPassword();
+                toast.success('Succesfully Updated.', {
+                    title: 'Succesfully Updated.',
+                    duration: 3000,
+                    variant: 'variant3',
+                });
+            }
+        });
+    }
+
     const SyncCustomer = async () => {
 
         setSyncing(true);
@@ -173,20 +221,12 @@ export default function MemberDetails({ user }) {
         }
     }
 
-    useEffect(() => {
-        userWallet.forEach(wallet => {
-            if (wallet.type === 'cash_wallet') {
-                setCashWallet(wallet);
-            } else if (wallet.type === 'dine_in_wallet') {
-                setDineWallet(wallet);
-            }
-        });
-    }, [userWallet]);
-
     return (
         <Authenticated
             header='Member Detail'
         >
+
+            <Head  title="Member Details" />
             <div className="flex flex-col gap-5">
                 {
                     user.customer_id !== null && (
@@ -219,8 +259,13 @@ export default function MemberDetails({ user }) {
                                                 <div className="text-neutral-900 text-xs font-bold leading-none">{userData.role_id ? userData.role_id : userData.member_id}</div>
                                             </div>
                                         </div>
-                                        <div className="cursor-pointer" onClick={() => editProfile(user)}>
-                                            <EditIcon />
+                                        <div className="flex items-center gap-5">
+                                            <div className="cursor-pointer" onClick={() => editProfile(user)}>
+                                                <EditIcon />
+                                            </div>
+                                            <div className="cursor-pointer" onClick={() => editPassword(user)}>
+                                                <KeyIcon />
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 grid-rows-3 gap-3 px-1">
@@ -265,8 +310,13 @@ export default function MemberDetails({ user }) {
                                                             <div className="text-neutral-900 text-xs font-bold leading-none"><Skeleton width="8rem" className="mb-1"></Skeleton></div>
                                                         </div>
                                                     </div>
-                                                    <div className="cursor-pointer" onClick={() => editProfile(user)}>
-                                                        <EditIcon />
+                                                    <div className="flex items-center gap-5">
+                                                        <div >
+                                                            <EditIcon />
+                                                        </div>
+                                                        <div >
+                                                            <KeyIcon />
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="grid grid-cols-2 grid-rows-3 gap-3 px-1">
@@ -318,22 +368,13 @@ export default function MemberDetails({ user }) {
                                 <div className="flex flex-col">
                                     <div className="text-xs text-neutral-300">Dine In Credit Wallet</div>
                                     <div className="text-sm text-neutral-900 font-bold flex items-center gap-1">
-                                        <span>RM </span>
-                                        {
-                                            dineWallet && (
-                                                <CountUp end={dineWallet.balance} duration={2} decimals={2}/>
-                                            )
-                                        }
+                                        <span>RM </span> <CountUp end={dineWallet.balance} duration={2} decimals={2}/>
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="text-xs text-neutral-300">Cash Wallet Credit</div>
                                     <div className="text-sm text-neutral-900 font-bold">
-                                        RM  {
-                                                cashWallet && (
-                                                    <CountUp end={cashWallet.balance} duration={2} decimals={2}/>
-                                                )
-                                            }
+                                        <span>RM </span>  <CountUp end={cashWallet.balance} duration={2} decimals={2}/>
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
@@ -383,7 +424,144 @@ export default function MemberDetails({ user }) {
                     </div>
                 }
             >
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 px-5 py-3">
+                    {
+                        selectedWalletType && (
+                            <>
+                                {
+                                    selectedWalletType.name === 'Dine In Wallet' && (
+                                        <div className="py-3 flex flex-col items-center justify-center">
+                                            <div className="text-sm">Balance:</div>
+                                            <div className="font-bold text-lg leading-none">
+                                                RM <CountUp end={dineWallet.balance} duration={2} decimals={2}/>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                {
+                                    selectedWalletType.name === 'Credit Wallet' && (
+                                        <div className="py-3 flex flex-col items-center justify-center">
+                                            <div className="text-sm">Balance:</div>
+                                            <div className="font-bold text-lg leading-none">
+                                                RM <CountUp end={cashWallet.balance} duration={2} decimals={2}/>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+{
+                                    selectedWalletType.name === 'Point' && (
+                                        <div className="py-3 flex flex-col items-center justify-center">
+                                            <div className="text-sm">Balance:</div>
+                                            <div className="font-bold text-lg leading-none">
+                                                <CountUp end={user.point} duration={2} decimals={2}/> pts
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </>
+                        )
+                    }
+                    
+                    <div className="grid grid-cols-2 gap-5">
+                        <div className="flex flex-col space-y-1 w-full">
+                            <InputLabel value='Wallet' />
+                            <Dropdown 
+                                value={selectedWalletType}
+                                onChange={(e) => {
+                                    setSelectedWalletType(e.value);
+                                    setData('wallet_type', e.value.name); 
+                                }} 
+                                options={walletType}
+                                optionLabel="name" 
+                                placeholder="Select Wallet" 
+                                className="w-full rounded-lg border border-neutral-100" 
+                                pt={{
+                                    input: 'bg-transparent'
+                                }}
+                            />
+                            <InputError message={errors.wallet_type} className="mt-2" />
+                        </div>
+                        <div className="flex flex-col space-y-1 w-full">
+                            <InputLabel value='Action' />
+                            <Dropdown 
+                                value={selectedBalType}
+                                onChange={(e) => {
+                                    setSelectedBalType(e.value);
+                                    setData('bal_type', e.value.name); 
+                                }} 
+                                options={balanceType}
+                                optionLabel="name" 
+                                placeholder="Action" 
+                                className="w-full rounded-lg border border-neutral-100" 
+                                pt={{
+                                    input: 'bg-transparent'
+                                }}
+                            />
+                            <InputError message={errors.bal_type} className="mt-2" />
+                        </div>
+                    </div>
+                    {
+                        selectedWalletType ? (
+                            <>
+                                {
+                                    selectedWalletType.name === 'Dine In Wallet' && (
+                                        <div className="flex flex-col space-y-1 w-full">
+                                            <InputLabel value='Amount' />
+                                            <InputNumber 
+                                                inputId="amount" 
+                                                value={data.amount || ''} 
+                                                onValueChange={(e) => setData('amount', e.value)} 
+                                                mode="currency" 
+                                                currency="MYR" locale="en-MY"
+                                                className="w-full font-bold border border-neutral-100 rounded-md focus:outline-none focus:ring-0"
+                                            />
+                                            <InputError message={errors.amount} className="mt-2" />
+                                        </div>
+                                    )
+                                }
+
+                                {
+                                    selectedWalletType.name === 'Credit Wallet' && (
+                                        <div className="flex flex-col space-y-1 w-full">
+                                            <InputLabel value='Amount' />
+                                            <InputNumber 
+                                                inputId="amount" 
+                                                value={data.amount || ''} 
+                                                onValueChange={(e) => setData('amount', e.value)} 
+                                                mode="currency" 
+                                                currency="MYR" locale="en-MY"
+                                                className="w-full font-bold border border-neutral-100 rounded-md focus:outline-none focus:ring-0"
+                                            />
+                                            <InputError message={errors.amount} className="mt-2" />
+                                        </div>
+                                    )
+                                }
+
+{
+                                    selectedWalletType.name === 'Point' && (
+                                        <div className="flex flex-col space-y-1 w-full">
+                                            <InputLabel value='Point' />
+                                            <InputNumber 
+                                                inputId="point" 
+                                                value={data.point || ''} 
+                                                onValueChange={(e) => setData('point', e.value)} 
+                                                suffix=" PTS"
+                                                className="w-full font-bold border border-neutral-100 rounded-md focus:outline-none focus:ring-0"
+                                            />
+                                            <InputError message={errors.amount} className="mt-2" />
+                                        </div>
+                                    )
+                                }
+                            </>
+                        ) : (
+                            ''
+                        )
+                    }
+                    
+                </div>
+                {/* <div className="flex flex-col gap-2">
                     
                     <div className="grid grid-cols-2 gap-2 px-5 py-3 border-b border-neutral-100">
                         <div className="col-span-1 font-bold text-base">
@@ -420,24 +598,7 @@ export default function MemberDetails({ user }) {
                                 />
                             </div>
                         </div>
-                        {/* <div className="col-span-2 flex items-center gap-2">
-                            <div className="font-medium text-base w-full text-neutral-500">
-                                <InputLabel value='Point' className="text-sm"/>
-                            </div>
-                            <div>
-                                <InputNumber 
-                                    inputId="point" 
-                                    value={data.point || ''} 
-                                    onValueChange={(e) => setData('point', e.value)}
-                                    min={0}
-                                    useGrouping={false}
-                                    className="w-full font-bold border border-neutral-100 focus:border focus:border-primary-500 rounded-md focus:outline-none focus:ring-0 caret-primary-500"
-                                    pt={{
-                                        input: 'focus:outline-none focus:ring-0 focus:ring-transparent'
-                                    }}
-                                />
-                            </div>
-                        </div> */}
+                        
                     </div>
                     <div className="flex flex-col px-5 py-1">
                         <div className="font-bold text-base">
@@ -470,7 +631,7 @@ export default function MemberDetails({ user }) {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </Modal>
 
             <Modal
@@ -502,184 +663,264 @@ export default function MemberDetails({ user }) {
                     </div>
                 }
             >
-                <div className="grid grid-cols-6 px-5 py-3 gap-5">
-                    <div className="flex flex-col space-y-1 col-span-3">
-                        <div className="text-xs text-neutral-300">Name</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.name || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('name', e.target.value)}
-                            />
+                <div className="px-5 py-3 flex flex-col gap-5">
+                    {/* <div className="w-full flex justify-center items-center">
+                        <div>
+                            <img className='object-cover md:w-14 ld:w-20 md:h-14 ld:h-20 rounded-full' src='https://img.freepik.com/free-icon/user_318-159711.jpg' alt="merchant_pic" />
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-3">
-                        <div className="text-xs text-neutral-300">Email</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='email'
-                                value={data.email || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('email', e.target.value)}
-                                disabled={false}
-                            />
+                    </div> */}
+                    <div className="grid grid-cols-6 md:gap-3 lg:gap-5">
+                        <div className="flex flex-col space-y-1 col-span-3">
+                            <div className="text-xs text-neutral-300">Name</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.name || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('name', e.target.value)}
+                                />
+                                <InputError message={errors.name} className="mt-1" />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300 col-span-3">Phone</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.phone || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('phone', e.target.value)}
-                                disabled={true}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-3">
+                            <div className="text-xs text-neutral-300">Email</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='email'
+                                    value={data.email || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    disabled={false}
+                                />
+                                <InputError message={errors.email} className="mt-1" />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">N2U Role ID</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.role_id || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('role_id', e.target.value)}
-                                disabled={true}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300 col-span-3">Phone</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.phone || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('phone', e.target.value)}
+                                    disabled={true}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Existing Card ID</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.member_id || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('member_id', e.target.value)}
-                                disabled={true}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">N2U Role ID</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.role_id || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('role_id', e.target.value)}
+                                    disabled={true}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Rank</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={user.rank.name || ""}
-                                className="mt-1 block w-full"
-                                disabled={true}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Existing Card ID</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.member_id || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('member_id', e.target.value)}
+                                    disabled={true}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Date of Birth</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='date'
-                                value={data.dob || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('dob', e.target.value)}
-                                disabled={false}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Rank</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={user.rank.name || ""}
+                                    className="mt-1 block w-full"
+                                    disabled={true}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Gender {data.gender}</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput
-                                type="text"
-                                value={data.gender === '0' ? 'Male' : data.gender === '1' ? 'Female' : ''}
-                                className="mt-1 block w-full"
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === 'Male') {
-                                    setData('gender', 0);
-                                    } else if (value === 'Female') {
-                                    setData('gender', 1);
-                                    } else {
-                                    setData('gender', '');
-                                    }
-                                }}
-                            />
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Date of Birth</div>
+                            <div className="text-sm text-neutral-900">
+                                {/* <TextInput 
+                                    type='date'
+                                    value={data.dob || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('dob', e.target.value)}
+                                    disabled={false}
+                                /> */}
+                                <Calendar 
+                                    value={data.dob} 
+                                    onChange={(e) => {
+                                        setData('dob', e.value);
+                                    }}
+                                    className="border border-neutral-100 rounded-lg hover:border-primary-500 focus:border-primary-500 focus:shadow-none focus:outline-none focus:ring-0"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Gender</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput
+                                    type="text"
+                                    value={data.gender === '0' ? 'Male' : data.gender === '1' ? 'Female' : ''}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value === 'Male') {
+                                        setData('gender', 0);
+                                        } else if (value === 'Female') {
+                                        setData('gender', 1);
+                                        } else {
+                                        setData('gender', '');
+                                        }
+                                    }}
+                                />
 
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Address</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Address</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.address1 || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('address1', e.target.value)}
+                                    disabled={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Address 2</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.address2 || ""}
+                                    onChange={(e) => setData('address2', e.target.value)}
+                                    className="mt-1 block w-full"
+                                    disabled={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Address 3</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.address3 || ""}
+                                    onChange={(e) => setData('address3', e.target.value)}
+                                    className="mt-1 block w-full"
+                                    disabled={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">City</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.city || ""}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('city', e.target.value)}
+                                    disabled={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">State</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    type='text'
+                                    value={data.state || ""}
+                                    onChange={(e) => setData('state', e.target.value)}
+                                    className="mt-1 block w-full"
+                                    disabled={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-2">
+                            <div className="text-xs text-neutral-300">Zip</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
                                 type='text'
-                                value={data.address1 || ""}
+                                value={data.zip || ""}
                                 className="mt-1 block w-full"
-                                onChange={(e) => setData('address1', e.target.value)}
-                                disabled={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Address 2</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.address2 || ""}
-                                onChange={(e) => setData('address2', e.target.value)}
-                                className="mt-1 block w-full"
-                                disabled={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Address 3</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.address3 || ""}
-                                onChange={(e) => setData('address3', e.target.value)}
-                                className="mt-1 block w-full"
-                                disabled={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">City</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.city || ""}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData('city', e.target.value)}
-                                disabled={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">State</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                                type='text'
-                                value={data.state || ""}
-                                onChange={(e) => setData('state', e.target.value)}
-                                className="mt-1 block w-full"
-                                disabled={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 col-span-2">
-                        <div className="text-xs text-neutral-300">Zip</div>
-                        <div className="text-sm text-neutral-900">
-                            <TextInput 
-                               type='text'
-                               value={data.zip || ""}
-                               className="mt-1 block w-full"
-                               onChange={(e) => setData('zip', e.target.value)}
-                               disabled={false} 
-                            />
+                                onChange={(e) => setData('zip', e.target.value)}
+                                disabled={false} 
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
+            </Modal>
+
+            <Modal
+                isOpen={editPasswordOpen}
+                close={closeEditPassword}
+                title='Edit Password'
+                closeIcon={<XIcon />}
+                maxWidth='md'
+                maxHeight='md'
+                footer={
+                    <div className="flex justify-end gap-5 ">
+                        <Button
+                            size="sm"
+                            variant="white"
+                            className="flex justify-center"
+                            onClick={closeEditPassword}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="flex justify-center"
+                            type="submit"
+                            onClick={updateNewPassword}
+                            disabled={processing}
+                        >
+                            <span className="px-2">Save</span>
+                        </Button>
+                    </div>
+                }
+            >
+                <form>
+                    <div className="px-5 py-3 flex flex-col gap-5">
+                        <div className="flex flex-col space-y-1 col-span-3">
+                            <div className="text-xs text-neutral-300">New Password</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    id="password"
+                                    name="password"
+                                    type='password'
+                                    value={data.password}
+                                    autoComplete="new-password"
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <InputError message={errors.password} className="mt-1" />
+                            </div>
+                        </div>
+                        <div className="flex flex-col space-y-1 col-span-3">
+                            <div className="text-xs text-neutral-300">Confirm New Password</div>
+                            <div className="text-sm text-neutral-900">
+                                <TextInput 
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    type='password'
+                                    value={data.password_confirmation}
+                                    autoComplete="new-password"
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </Modal>
 
         </Authenticated>

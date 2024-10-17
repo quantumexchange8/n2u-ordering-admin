@@ -16,5 +16,6 @@ class PointLog extends Model
         'old_point',
         'new_point',
         'type',
+        'adjust_type',
     ];
 }

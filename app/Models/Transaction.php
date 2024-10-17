@@ -20,6 +20,8 @@ class Transaction extends Model
         'handle_by',
         'transaction_date',
         'remark',
+        'old_balance',
+        'adjustment_type',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
