@@ -16,6 +16,7 @@ import CountUp from 'react-countup';
 import { Calendar } from 'primereact/calendar';
 import InputError from "@/Components/InputError";
 import { Dropdown } from 'primereact/dropdown';
+import { Switch } from '@headlessui/react'
 
 export default function MemberDetails({ user, cashWallet, dineWallet }) {
 
@@ -42,6 +43,7 @@ export default function MemberDetails({ user, cashWallet, dineWallet }) {
     // const [cashWallet, setCashWallet] = useState(null);
     const [selectedWalletType, setSelectedWalletType] = useState(null);
     const [selectedBalType, setSelectedBalType] = useState(null);
+    const [checked, setChecked] = useState(false);
     
     const fetchData = async () => {
         try {
@@ -139,6 +141,7 @@ export default function MemberDetails({ user, cashWallet, dineWallet }) {
         password_confirmation: '',
         wallet_type: '',
         bal_type: '',
+        status: user.status,
     });
 
     const saveWallet = (e) => {
@@ -221,6 +224,36 @@ export default function MemberDetails({ user, cashWallet, dineWallet }) {
         }
     }
 
+    useEffect(() => {
+        CheckStatus(user);
+      }, [user]);
+
+    const CheckStatus = (user) => {
+        {
+            user.status === '0' ? (
+                setChecked(true)
+            ) : (
+                setChecked(false)
+            )
+        }
+    }
+
+    const handleSwitchChange = () => {
+        data.status=user.status;
+        post('/member/updateMemberStatus', {
+            onSuccess: () => {       
+                setIsLoading(false);
+                reset();
+                handleItemAdded();
+                toast.success('Succesfully Updated.', {
+                    title: 'Succesfully Updated.',
+                    duration: 3000,
+                    variant: 'variant3',
+                });                
+            }    
+        });
+    }
+
     return (
         <Authenticated
             header='Member Detail'
@@ -260,6 +293,23 @@ export default function MemberDetails({ user, cashWallet, dineWallet }) {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-5">
+                                            <div>
+                                                <Switch
+                                                    checked={checked}
+                                                    onChange={handleSwitchChange}
+                                                    disabled={isLoading}
+                                                    className={`group relative flex h-7 w-14 cursor-pointer rounded-full 
+                                                                ${checked ? 'bg-green-500' : 'bg-gray-300'} 
+                                                                p-1 transition-colors duration-200 ease-in-out focus:outline-none`}
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full 
+                                                                    ${checked ? 'bg-white translate-x-7' : 'bg-white translate-x-0'} 
+                                                                    ring-0 shadow-lg transition duration-200 ease-in-out`}
+                                                    />
+                                                </Switch>
+                                            </div>
                                             <div className="cursor-pointer" onClick={() => editProfile(user)}>
                                                 <EditIcon />
                                             </div>

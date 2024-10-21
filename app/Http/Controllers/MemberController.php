@@ -291,4 +291,20 @@ class MemberController extends Controller
 
         return redirect()->back();
     }
+
+    public function updateMemberStatus(Request $request)
+    {
+        $request->validate([
+            'status' => [
+                'required',
+            ],
+        ]);
+        
+        $user = User::find($request->id); 
+        $user->update([
+            'status' => $request->status ? '0' : '1',
+            
+        ]);
+        return redirect()->back();
+    }
 }
