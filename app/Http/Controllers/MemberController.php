@@ -307,4 +307,19 @@ class MemberController extends Controller
         ]);
         return redirect()->back();
     }
+
+    public function pointHistory()
+    {   
+        return Inertia::render('Point/PointHistory');
+    }
+
+    public function getPointHistory()
+    {
+        $history = PointLog::query()
+            ->with(['user:id,name'])
+            ->latest()
+            ->get();
+
+        return response()->json($history);   
+    }
 }

@@ -320,6 +320,21 @@ const KeyIcon = ({color, className, ...rest}) => {
     );
 }
 
+const PointIcon = ({color, className, ...rest}) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className={className} {...rest} fill="none">
+            <path d="M5.83317 6.25065C8.13436 6.25065 9.99984 5.31791 9.99984 4.16732C9.99984 3.01672 8.13436 2.08398 5.83317 2.08398C3.53198 2.08398 1.6665 3.01672 1.6665 4.16732C1.6665 5.31791 3.53198 6.25065 5.83317 6.25065Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M1.6665 4.16602C1.6665 4.16602 1.6665 5.9321 1.6665 7.08268C1.6665 8.23327 3.53198 9.16602 5.83317 9.16602C8.13434 9.16602 9.99984 8.23327 9.99984 7.08268C9.99984 6.40118 9.99984 4.16602 9.99984 4.16602" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M1.6665 7.08398C1.6665 7.08398 1.6665 8.85007 1.6665 10.0007C1.6665 11.1512 3.53198 12.084 5.83317 12.084C8.13434 12.084 9.99984 11.1512 9.99984 10.0007C9.99984 9.31915 9.99984 7.08398 9.99984 7.08398" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M1.6665 10C1.6665 10 1.6665 11.7661 1.6665 12.9167C1.6665 14.0672 3.53198 15 5.83317 15C8.13434 15 9.99984 14.0672 9.99984 12.9167C9.99984 12.2352 9.99984 10 9.99984 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M1.6665 12.916C1.6665 12.916 1.6665 14.6821 1.6665 15.8327C1.6665 16.9833 3.53198 17.916 5.83317 17.916C8.13434 17.916 9.99984 16.9833 9.99984 15.8327C9.99984 15.1512 9.99984 12.916 9.99984 12.916" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M14.1667 12.0827C16.4679 12.0827 18.3333 11.1499 18.3333 9.99935C18.3333 8.84876 16.4679 7.91602 14.1667 7.91602C11.8655 7.91602 10 8.84876 10 9.99935C10 11.1499 11.8655 12.0827 14.1667 12.0827Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M10 10C10 10 10 11.7661 10 12.9167C10 14.0672 11.8655 15 14.1667 15C16.4678 15 18.3333 14.0672 18.3333 12.9167C18.3333 12.2352 18.3333 10 18.3333 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+            <path d="M10 12.916C10 12.916 10 14.6821 10 15.8327C10 16.9833 11.8655 17.916 14.1667 17.916C16.4678 17.916 18.3333 16.9833 18.3333 15.8327C18.3333 15.1512 18.3333 12.916 18.3333 12.916" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="round"/>
+        </svg>
+    );
+}
+
 export { 
     Circle,
     XIcon,
@@ -348,4 +363,5 @@ export {
     TableIcon,
     SyncIcon,
     KeyIcon,
+    PointIcon,
 };

@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/deleteMember', [MemberController::class, 'deleteMember'])->name('member.deleteMember');
         Route::post('/updateMemberPassword', [MemberController::class, 'updateMemberPassword'])->name('member.updateMemberPassword');
         Route::post('/updateMemberStatus', [MemberController::class, 'updateMemberStatus'])->name('member.updateMemberStatus');
+        Route::get('/pointHistory', [MemberController::class, 'pointHistory'])->name('member.pointHistory');
+        Route::get('/getPointHistory', [MemberController::class, 'getPointHistory'])->name('member.getPointHistory');
 
      });
 

@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 // import { EinbillLogo } from "@/Components/Icon/logo";
-import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon } from "./Icon/Outline";
+import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon, PointIcon} from "./Icon/Outline";
 import { useState } from "react";
 import { useEffect } from "react";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
@@ -119,6 +119,30 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                 )
                             }
                             
+                        </div>
+                        <div >
+                            {
+                                !expanded ? (
+                                    <Link href={route('member.pointHistory')} className={`${
+                                        url === '/member/pointHistory' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
+                                    }`}>
+                                        <div className={`${url === '/member/pointHistory' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <PointIcon color='currentColor' className={`${url === '/member/pointHistory' ? 'text-white' : 'text-gray-800'}`}/>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <Link href={route('member.pointHistory')} className={`${
+                                        url === '/member/pointHistory' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
+                                    }`}>
+                                        <div className={`${url === '/member/pointHistory' ? 'bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md' : 'p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md'} `}>
+                                            <PointIcon color='currentColor' />
+                                            <div className="text-sm">
+                                                Point History
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )
+                            }   
                         </div>
                         <div >
                             {

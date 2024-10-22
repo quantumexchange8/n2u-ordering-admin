@@ -18,4 +18,9 @@ class PointLog extends Model
         'type',
         'adjust_type',
     ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }
