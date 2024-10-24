@@ -20,7 +20,7 @@ export default function PointHistory() {
     const [selectedPoint, setSelectedPoint] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState(null);
-    const [dates, setDates] = useState('');
+    const [dateFilterValue, setDateFilterValue] = useState('');
 
     const fetchData = async () => {
         try {
@@ -102,10 +102,48 @@ export default function PointHistory() {
         setGlobalFilterValue(value);
     };
 
-    const FilterDates = (e) => {
-        const value = e.target.value;
-        setDates(value);
-        console.log(value);
+    const onDateFilterChange = (e) => {
+        const dateRange = e.value;
+        let _filters = { ...filters };
+        
+        if (dateRange && dateRange[0] && dateRange[1]) {
+            const startDateObj = new Date(dateRange[0]);
+            
+            const startDate = startDateObj.getFullYear() + '-' +
+                        String(startDateObj.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(startDateObj.getDate()).padStart(2, '0') + ' ' +
+                        String(startDateObj.getHours()).padStart(2, '0') + ':' +
+                        String(startDateObj.getMinutes()).padStart(2, '0') + ':' +
+                        String(startDateObj.getSeconds()).padStart(2, '0');
+            console.log('1', startDate)
+
+            const endDateObj = new Date(dateRange[1]);
+            
+            endDateObj.setHours(23,59,59);
+            dateRange[1] = endDateObj;
+            const endDate = endDateObj.getFullYear() + '-' +
+                        String(endDateObj.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(endDateObj.getDate()).padStart(2, '0') + ' ' +
+                        String(endDateObj.getHours()).padStart(2, '0') + ':' +
+                        String(endDateObj.getMinutes()).padStart(2, '0') + ':' +
+                        String(endDateObj.getSeconds()).padStart(2, '0');
+            console.log('2', endDate)              
+
+            _filters['global'] = {
+                value: [startDate, endDate],
+                matchMode: 'between'
+            };
+            console.log(dateRange,startDate,endDate);
+        } else {
+            // Reset filter if no date range is selected
+            _filters['global'] = {
+                value: null,
+                matchMode: 'between'
+            };
+        }
+    
+        setFilters(_filters);
+        setDateFilterValue(dateRange);
     };
 
     const renderHeader = () => {
@@ -122,12 +160,14 @@ export default function PointHistory() {
                     />
                 </IconField>
                 <Calendar 
-                    value={dates}
-                    onChange={FilterDates}
+                    value={dateFilterValue}
+                    onChange={onDateFilterChange}
+                    dateFormat="dd M yy"
                     selectionMode="range"
                     placeholder="Filter Date"
                     readOnlyInput
                     hideOnRangeSelection
+                    showButtonBar
                 />
                 
             </div>
@@ -141,7 +181,7 @@ export default function PointHistory() {
             <div className="w-full">
                 {
                     data.length > 0 ? (
-                        <DataTable value={data} removableSort tableStyle={{ minWidth: '160px' }} header={header} filters={filters} globalFilterFields={['user.name','type','amount','earning_point','old_point','new_point']}>
+                        <DataTable value={data} removableSort tableStyle={{ minWidth: '160px' }} header={header} filters={filters} globalFilterFields={['user.name','type','amount','earning_point','old_point','new_point','created_at']}>
                             <Column field="name" header="Member" body={userDetails} filterField="user.name"></Column>
                             <Column field="type" header="type" body={(rowData) => rowData.type.charAt(0).toUpperCase() + rowData.type.slice(1)}></Column>
                             <Column field="amount" header="amount" body={(rowData)=>`$${rowData.earning_point}`}></Column>
