@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -49,6 +50,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/getPointHistory', [MemberController::class, 'getPointHistory'])->name('member.getPointHistory');
 
      });
+
+    /**
+     * ==============================
+     *           Order Listing
+     * ==============================
+     */
+    Route::prefix('order')->group(function () {
+        Route::get('/orderHistory', [OrderController::class, 'orderHistory'])->name('order.orderHistory');
+    });
 
      /**
      * ==============================
