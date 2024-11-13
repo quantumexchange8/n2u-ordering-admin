@@ -129,7 +129,7 @@ class FetchDataController extends Controller
             'end_date' => ['required'], // 'confirmed' ensures password and confirmPassword match
         ]);
 
-        $api = $this->apiKey;
+        $this->apiKey = env('POS_token');
         $resource_type = 'Transaction';
         $outlet = 'outlet1';
         $start_date = $request->start_date;
