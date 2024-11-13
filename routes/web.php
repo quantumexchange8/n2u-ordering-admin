@@ -57,7 +57,9 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('order')->group(function () {
-        Route::get('/orderHistory', [OrderController::class, 'orderHistory'])->name('order.orderHistory');
+        Route::get('/order-history', [OrderController::class, 'orderHistory'])->name('order.orderHistory');
+        Route::get('/getOrderTransaction', [OrderController::class, 'getOrderTransaction'])->name('order.getOrderTransaction');
+        
     });
 
      /**
@@ -130,6 +132,8 @@ Route::middleware('auth')->group(function () {
      */
     Route::post('/fetch-customer', [FetchDataController::class, 'fetchCustomer'])->name('fetch-customer');
     Route::post('/syncUserDetails', [FetchDataController::class, 'syncUserDetails'])->name('syncUserDetails');
+
+    Route::post('/fetch-transaction', [FetchDataController::class, 'fetchTransaction'])->name('fetch-transaction');
 
 });
 

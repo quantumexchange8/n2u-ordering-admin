@@ -124,17 +124,17 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                             {
                                 !expanded ? (
                                     <Link href={route('order.orderHistory')} className={`${
-                                        url === '/order/orderHistory' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
+                                        url === '/order/order-history' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
                                     }`}>
-                                        <div className={`${url === '/order/orderHistory' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
-                                            <OrderIcon color='currentColor' className={`${url === '/order/orderHistory' ? 'text-white' : 'text-gray-800'}`}/>
+                                        <div className={`${url === '/order/order-history' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <OrderIcon color='currentColor' className={`${url === '/order/order-history' ? 'text-white' : 'text-gray-800'}`}/>
                                         </div>
                                     </Link>
                                 ) : (
                                     <Link href={route('order.orderHistory')} className={`${
-                                        url === '/order/orderHistory' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
+                                        url === '/order/order-history' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
                                     }`}>
-                                        <div className={`${url === '/order/orderHistory' ? 'bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md' : 'p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md'} `}>
+                                        <div className={`${url === '/order/order-history' ? 'bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md' : 'p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md'} `}>
                                             <OrderIcon color='currentColor' />
                                             <div className="text-sm">
                                                 Order History

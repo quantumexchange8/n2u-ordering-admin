@@ -11,6 +11,7 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import TextInput from "@/Components/TextInput";
 import { Calendar } from 'primereact/calendar';
+import { format, isValid } from 'date-fns';
 
 export default function PointHistory() {
 
@@ -21,6 +22,7 @@ export default function PointHistory() {
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState(null);
     const [dateFilterValue, setDateFilterValue] = useState('');
+    const [dates, setDates] = useState();
 
     const fetchData = async () => {
         try {
@@ -51,6 +53,11 @@ export default function PointHistory() {
 
     }
 
+    const formatToDBDate = (date) => {
+        if (!date || !isValid(date)) return null; // Check if date is valid before formatting
+        return format(date, 'yyyy-MM-dd HH:mm:ss');
+    };
+
     const initFilters = () => {
         setFilters({
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -59,8 +66,11 @@ export default function PointHistory() {
             amount: { value: null, matchMode: FilterMatchMode.IN },
             earning_point: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
             old_point: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-            new_point: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
-
+            new_point: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+            created_at: {
+                value: dates ? dates.map(date => formatToDBDate(date)) : null,
+                matchMode: FilterMatchMode.BETWEEN
+            }
         });
         setGlobalFilterValue('');
     };
@@ -74,7 +84,6 @@ export default function PointHistory() {
     }
 
     const requestedDate = (rowData) => {
-        
         return (
             <div className="flex flex-col">
                 <div>{formatDateTime(rowData.created_at)}</div>
@@ -108,35 +117,22 @@ export default function PointHistory() {
         
         if (dateRange && dateRange[0] && dateRange[1]) {
             const startDateObj = new Date(dateRange[0]);
-            
-            const startDate = startDateObj.getFullYear() + '-' +
-                        String(startDateObj.getMonth() + 1).padStart(2, '0') + '-' +
-                        String(startDateObj.getDate()).padStart(2, '0') + ' ' +
-                        String(startDateObj.getHours()).padStart(2, '0') + ':' +
-                        String(startDateObj.getMinutes()).padStart(2, '0') + ':' +
-                        String(startDateObj.getSeconds()).padStart(2, '0');
-            console.log('1', startDate)
+            const startDate = formatToDBDate(startDateObj);
 
             const endDateObj = new Date(dateRange[1]);
-            
-            endDateObj.setHours(23,59,59);
-            dateRange[1] = endDateObj;
-            const endDate = endDateObj.getFullYear() + '-' +
-                        String(endDateObj.getMonth() + 1).padStart(2, '0') + '-' +
-                        String(endDateObj.getDate()).padStart(2, '0') + ' ' +
-                        String(endDateObj.getHours()).padStart(2, '0') + ':' +
-                        String(endDateObj.getMinutes()).padStart(2, '0') + ':' +
-                        String(endDateObj.getSeconds()).padStart(2, '0');
-            console.log('2', endDate)              
+            // Ensure endDate is inclusive by setting the time to 23:59:59
+            endDateObj.setHours(23, 59, 59);
+            const endDate = formatToDBDate(endDateObj);
 
-            _filters['global'] = {
+            _filters['created_at'] = {
                 value: [startDate, endDate],
                 matchMode: 'between'
             };
-            console.log(dateRange,startDate,endDate);
+
+            setDates(dateRange);
         } else {
             // Reset filter if no date range is selected
-            _filters['global'] = {
+            _filters['created_at'] = {
                 value: null,
                 matchMode: 'between'
             };
@@ -181,7 +177,7 @@ export default function PointHistory() {
             <div className="w-full">
                 {
                     data.length > 0 ? (
-                        <DataTable value={data} removableSort tableStyle={{ minWidth: '160px' }} header={header} filters={filters} globalFilterFields={['user.name','type','amount','earning_point','old_point','new_point','created_at']}>
+                        <DataTable value={data} removableSort tableStyle={{ minWidth: '160px' }} header={header} filters={{ 'created_at': filters['created_at'] }} globalFilterFields={['user.name','type','amount','earning_point','old_point','new_point']}>
                             <Column field="name" header="Member" body={userDetails} filterField="user.name"></Column>
                             <Column field="type" header="type" body={(rowData) => rowData.type.charAt(0).toUpperCase() + rowData.type.slice(1)}></Column>
                             <Column field="amount" header="amount" body={(rowData)=>`$${rowData.earning_point}`}></Column>

@@ -49,6 +49,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::user()->role !== 'admin') {
+            // Log the user out and throw an error if the role is not 'admin'
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => 'Access denied. You must be an admin to log in.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

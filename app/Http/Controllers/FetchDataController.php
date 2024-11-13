@@ -10,17 +10,16 @@ use Illuminate\Support\Facades\Log;
 
 class FetchDataController extends Controller
 {
-    // protected $apiKey;
+    protected $apiKey;
 
     public function fetchCustomer(Request $request)
     {
-        // $this->apiKey = env('POS_token');
-        $api = '6d6331e163cda5af33ed0829a35f1d6b94579735';
+        $this->apiKey = env('POS_token');
         $resource_type = 'Customer';
         $outlet = 'outlet1';
 
         $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
-            'api_token' => $api,
+            'api_token' => $this->apiKey,
             'resource_type' => $resource_type,
             'outlet' => $outlet,
         ]);
@@ -120,5 +119,37 @@ class FetchDataController extends Controller
 
         // Return only the last 9 digits
         return substr($numericPhone, -9);
+    }
+
+    public function fetchTransaction(Request $request)
+    {
+        
+        $request->validate([
+            'start_date' => ['required'],
+            'end_date' => ['required'], // 'confirmed' ensures password and confirmPassword match
+        ]);
+
+        $api = $this->apiKey;
+        $resource_type = 'Transaction';
+        $outlet = 'outlet1';
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        
+        $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
+            'api_token' => $this->apiKey,
+            'resource_type' => $resource_type,
+            'outlet' => $outlet,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            Log::debug('response', $data);
+        } else {
+            return redirect()->back()->with('error', 'Failed to fetch data');
+        }
+
     }
 }
