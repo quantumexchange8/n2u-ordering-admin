@@ -151,7 +151,7 @@ class FetchDataController extends Controller
 
             foreach ($data['result']['user_data'] as $transaction) {
             
-                $transId = TransactionHistory::where('transaction_id', $transaction->idTransaction)->first();
+                $transId = TransactionHistory::where('transaction_id', $transaction['idTransaction'])->first();
 
                 if ($transId) {
                     // If the transaction ID already exists, skip to the next iteration
