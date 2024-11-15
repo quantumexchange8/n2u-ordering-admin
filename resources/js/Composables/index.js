@@ -46,9 +46,30 @@ const formatWallet = (name) => {
     }
 }
 
+const formatDateTime24H = (date, includeTime = true) => {
+    const formattedDate = new Date(date);
+
+    const year = formattedDate.getFullYear();
+    const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+    const day = formattedDate.getDate().toString().padStart(2, '0');
+
+    if (includeTime) {
+        let hours = formattedDate.getHours();
+        const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12 || 12; // Convert to 12-hour format (0 becomes 12)
+
+        return `${year}/${month}/${day} ${hours}:${minutes} ${ampm}`;
+    } else {
+        return `${year}/${month}/${day}`;
+    }
+};
+
+
 export {
     formatDateTime, 
     formatDate,
     formatAmount,
     formatWallet,
+    formatDateTime24H,
 };

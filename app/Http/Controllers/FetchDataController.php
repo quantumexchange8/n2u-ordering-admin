@@ -160,35 +160,37 @@ class FetchDataController extends Controller
 
                 // Process $transaction only if the transaction ID does not exist
                 TransactionHistory::create([
-                    'transaction_id' => $transaction->idTransaction,
+                    'transaction_id' => $transaction['idTransaction'],
                     // 'user_id' => $transaction->CustomerID,
-                    'receipt_no' => $transaction->ReceiptNo,
-                    'receipt_start' => $transaction->ReceiptDateStart,
-                    'receipt_end' => $transaction->ReceiptDateEnd,
-                    'receipt_total' => $transaction->ReceiptTotalAmount,
-                    'receipt_grand_total' => $transaction->ReceiptGrandTotal,
-                    'rounding' => $transaction->Rounding,
-                    'discount_type' => $transaction->DiscountType,
-                    'discount_amount' => $transaction->DiscountAmt,
-                    'discount_receipt_amount' => $transaction->DiscountOnReceiptAmt,
-                    'discount_id' => $transaction->DiscountID,
-                    'discount_item' => $transaction->DiscountOnItemAmt,
-                    'TipsType' => $transaction->tip_type,
-                    'TipsAmt' => $transaction->tip_amount,
-                    'TipsOnReceiptAmt' => $transaction->tip_receipt_amount,
-                    'Change' => $transaction->change,
-                    'table_id' => $transaction->TableID,
-                    'pax_no' => $transaction->NoOfPax,
-                    'trans_by' => $transaction->TransBy,
-                    'cust_name' => $transaction->CustName,
-                    'phone_no' => $transaction->PhoneNo,
-                    'customer_id' => $transaction->CustomerID,
+                    'receipt_no' => $transaction['ReceiptNo'],
+                    'receipt_start' => $transaction['ReceiptDateStart'],
+                    'receipt_end' => $transaction['ReceiptDateEnd'],
+                    'receipt_total' => $transaction['ReceiptTotalAmount'],
+                    'receipt_grand_total' => $transaction['ReceiptGrandTotal'],
+                    'rounding' => $transaction['Rounding'],
+                    'discount_type' => $transaction['DiscountType'],
+                    'discount_amount' => $transaction['DiscountAmt'],
+                    'discount_receipt_amount' => $transaction['DiscountOnReceiptAmt'],
+                    'discount_id' => $transaction['DiscountID'],
+                    'discount_item' => $transaction['DiscountOnItemAmt'],
+                    'TipsType' => $transaction['TipsType'],
+                    'TipsAmt' => $transaction['TipsAmt'],
+                    'TipsOnReceiptAmt' => $transaction['TipsOnReceiptAmt'],
+                    'Change' => $transaction['Change'],
+                    'table_id' => $transaction['TableID'],
+                    'pax_no' => $transaction['NoOfPax'],
+                    'trans_by' => $transaction['TransBy'],
+                    'cust_name' => $transaction['CustName'],
+                    'phone_no' => $transaction['PhoneNo'],
+                    'customer_id' => $transaction['CustomerID'],
                 ]);
+
+                return redirect()->back();
 
             }
 
         } else {
-            return redirect()->back()->with('error', 'Failed to fetch data');
+            return redirect()->back()->withErrors('error', 'Failed to fetch data');
         }
 
     }
