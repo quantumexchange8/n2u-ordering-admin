@@ -11,6 +11,7 @@ import { DeleteIcon, EditIcon, SyncIcon } from "@/Components/Icon/Outline";
 import { Calendar } from 'primereact/calendar';
 import { useForm } from "@inertiajs/react";
 import { format, isValid, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
+import toast from "react-hot-toast";
 
 export default function OrderTable() {
 
@@ -89,6 +90,14 @@ export default function OrderTable() {
 
         } catch (error) {
             console.error('Error updating status:', error);
+
+            toast.error('Failed to sync.', {
+                title: 'Failed to sync.',
+                description: 'No date is selected',
+                duration: 3000,
+                variant: 'variant1',
+            });
+
         } finally {
             setProcessing(false); // Reset processing state after request completes
         }

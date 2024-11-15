@@ -33,7 +33,7 @@ const CustomToaster = ({ t }) => {
                 ) : (
                   <div className="flex flex-col gap-3 w-full">
                     <div className="flex flex-col gap-1">
-                      <span className="font-bold">{resolveValue(t.title)}</span>
+                      <span className="font-bold leading-tight">{resolveValue(t.title)}</span>
                       {t.variant !== 'variant3' && <p className="w-full text-gray-900 text-sm">{resolveValue(t.description)}</p>}
                     </div>
                     <div className={`${t.variant === 'variant1' ? 'hidden' : 'block'}`}>
@@ -72,9 +72,9 @@ const getClassNames = (toast) => {
     case 'error':
       if (toast.variant === 'warning') {
         // Customize appearance for warning toast
-        return baseClass + " bg-gradient-to-r from-warning-950 from-10% to-gray-900 to-90%"; // Example: yellow background for warning
+        return baseClass + " bg-white"; // Example: yellow background for warning
       }
-      return baseClass + " bg-gradient-to-r from-error-950 from-10% to-gray-900 to-90%";
+      return baseClass + " bg-white/95";
     default:
       return baseClass;
   }

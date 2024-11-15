@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TransactionHistory;
 use App\Models\User;
 use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
@@ -147,6 +148,45 @@ class FetchDataController extends Controller
             $data = $response->json();
 
             Log::debug('response', $data);
+
+            foreach ($data['result']['user_data'] as $transaction) {
+            
+                $transId = TransactionHistory::where('transaction_id', $transaction->idTransaction)->first();
+
+                if ($transId) {
+                    // If the transaction ID already exists, skip to the next iteration
+                    continue;
+                }
+
+                // Process $transaction only if the transaction ID does not exist
+                TransactionHistory::create([
+                    'transaction_id' => $transaction->idTransaction,
+                    // 'user_id' => $transaction->CustomerID,
+                    'receipt_no' => $transaction->ReceiptNo,
+                    'receipt_start' => $transaction->ReceiptDateStart,
+                    'receipt_end' => $transaction->ReceiptDateEnd,
+                    'receipt_total' => $transaction->ReceiptTotalAmount,
+                    'receipt_grand_total' => $transaction->ReceiptGrandTotal,
+                    'rounding' => $transaction->Rounding,
+                    'discount_type' => $transaction->DiscountType,
+                    'discount_amount' => $transaction->DiscountAmt,
+                    'discount_receipt_amount' => $transaction->DiscountOnReceiptAmt,
+                    'discount_id' => $transaction->DiscountID,
+                    'discount_item' => $transaction->DiscountOnItemAmt,
+                    'TipsType' => $transaction->tip_type,
+                    'TipsAmt' => $transaction->tip_amount,
+                    'TipsOnReceiptAmt' => $transaction->tip_receipt_amount,
+                    'Change' => $transaction->change,
+                    'table_id' => $transaction->TableID,
+                    'pax_no' => $transaction->NoOfPax,
+                    'trans_by' => $transaction->TransBy,
+                    'cust_name' => $transaction->CustName,
+                    'phone_no' => $transaction->PhoneNo,
+                    'customer_id' => $transaction->CustomerID,
+                ]);
+
+            }
+
         } else {
             return redirect()->back()->with('error', 'Failed to fetch data');
         }
