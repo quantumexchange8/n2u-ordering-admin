@@ -143,9 +143,9 @@ export default function OrderTable() {
 
     const renderHeader = () => {
         return (
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-2 md:flex-row md:gap-0 md:justify-between">
                 <div className="flex gap-2 items-center">
-                    <div>
+                    <div className="w-full">
                         <IconField iconPosition="left">
                             <InputIcon className="pi pi-search" />
                             <TextInput 
@@ -153,12 +153,12 @@ export default function OrderTable() {
                                 onChange={onGlobalFilterChange} 
                                 placeholder="Keyword Search"
                                 withIcon
-                                className='font-medium'
+                                className='font-medium w-full'
                             />
                         </IconField>
                     </div>
                 </div>
-                <div className="flex items-center">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-0">
                     <div>
                         <Calendar  
                             value={dates}
@@ -168,9 +168,9 @@ export default function OrderTable() {
                             hideOnRangeSelection
                             showButtonBar
                             placeholder="mm/dd/yy-mm/dd/yy"
-                            className="border border-neutral-100 rounded-lg hover:border-primary-500 focus:border-primary-500 focus:shadow-none focus:outline-none focus:ring-0 rounded-tr-none rounded-br-none"
+                            className="border border-neutral-100 rounded-lg w-full md:max-w-52 hover:border-primary-500 focus:border-primary-500 focus:shadow-none focus:outline-none focus:ring-0 md:rounded-tr-none md:rounded-br-none"
                             pt={{
-                                root: 'rounded-tr-none rounded-br-none'
+                                root: 'md:rounded-tr-none md:rounded-br-none'
                             }}
                         />
                     </div>
@@ -178,7 +178,7 @@ export default function OrderTable() {
                         <Button 
                             size="sm" 
                             iconOnly 
-                            className="flex items-center gap-2 p-2.5 rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none"
+                            className="flex items-center justify-center md:justify-start gap-2 p-2.5 rounded-lg md:rounded-tr-md md:rounded-br-md md:rounded-tl-none md:rounded-bl-none w-full"
                             onClick={SyncTransaction}
                             disabled={processing}
                         >
