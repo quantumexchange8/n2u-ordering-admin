@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
 import { formatDateTime24H } from "@/Composables";
 import { Badge } from 'primereact/badge';
+import { NoAvailableData } from "@/Components/Icon/Brand";
         
 export default function OrderTable() {
 
@@ -225,6 +226,19 @@ export default function OrderTable() {
         setIsOpen(false);  // Close the modal
       };
 
+    const customEmptyArrayMessage = () => {
+        return (
+            <div className="flex flex-col items-center justify-center">
+                <div>
+                    <NoAvailableData />
+                </div>
+                <div className="font-semibold">
+                    No Order History Found
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
             <div className="flex flex-col">
@@ -255,7 +269,28 @@ export default function OrderTable() {
                         </div>
                     ) : (
                         <div>
-                            
+                            <DataTable 
+                                value={orderData} 
+                                removableSort 
+                                paginator 
+                                rows={8} 
+                                tableStyle={{ minWidth: '160px' }} 
+                                header={header} 
+                                filters={filters}
+                                selectionMode="single"
+                                selection={selectedTrans}
+                                onSelectionChange={(e) => openModal(e.value)}
+                                dataKey="id"
+                                scrollable
+                                emptyMessage={customEmptyArrayMessage}
+                            >
+                                <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
+                                <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
+                                <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
+                                <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
+                                <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
+                                <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
+                            </DataTable>
                         </div>
                     )
                 }
