@@ -197,17 +197,9 @@ export default function OrderTable() {
         return (
             <div>
                 {
-                    cust.cust_id ? (
+                    cust.cust_name ? (
                         <div>
-                            {cust.user ? (
-                                <div>
-                                    {cust.user.name}
-                                </div>
-                            ) : (
-                                <span className="text-xs">
-                                    User not found
-                                </span>
-                            )}
+                            { cust.cust_name }
                         </div>
                     ) : (
                         <div>
@@ -402,18 +394,25 @@ export default function OrderTable() {
                                 {selectedTrans.pax_no}
                             </div>
 
-                            <div className="text-sm">Customer ID:</div>
+                            <div className="text-sm">Customer:</div>
                             <div className=" text-sm font-bold ">
                                 {
-                                    selectedTrans.cust_id ? (
+                                    selectedTrans.cust_name ? (
                                         <div>
-                                            {
-                                                selectedTrans.user ? (
-                                                    <span>{selectedTrans.user.name}</span>
-                                                ) : (
-                                                    <span>User not found</span>
-                                                )
-                                            }
+                                            { selectedTrans.cust_name }
+                                        </div>
+                                    ) : (
+                                        '-'
+                                    )
+                                }
+                            </div>
+
+                            <div className="text-sm">Phone:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.phone_no ? (
+                                        <div>
+                                            { selectedTrans.phone_no }
                                         </div>
                                     ) : (
                                         '-'
@@ -444,6 +443,17 @@ export default function OrderTable() {
                             <div className=" text-sm font-bold text-right">
                                 {selectedTrans.reward_point} PTS
                             </div>
+
+                            {
+                                selectedTrans.remark && (
+                                    <>
+                                        <div className="text-sm ">Remarks:</div>
+                                        <div className=" text-sm font-bold text-right">
+                                            {selectedTrans.remark}
+                                        </div>
+                                    </>
+                                )
+                            }
                         </div>
                     </Modal>
                 )

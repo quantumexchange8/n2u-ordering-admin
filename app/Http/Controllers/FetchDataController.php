@@ -183,8 +183,9 @@ class FetchDataController extends Controller
                     'cust_name' => $transaction['CustName'] === "" ? null : $transaction['CustName'],
                     'phone_no' => $transaction['PhoneNo'] === "" ? null : $transaction['PhoneNo'],
                     'cust_id' => $transaction['CustomerID'] === "" ? null : $transaction['CustomerID'],
-                    'reward_point' => $transaction['RewardPoints'] === "" ? null : $transaction['RewardPoints'],
+                    'reward_point' => $transaction['RewardPoints'] ,
                     'remark' => $transaction['Remarks'] === "" ? null : $transaction['Remarks'],
+                    'voided' => $transaction['Voided'],
                 ]);
             }
 

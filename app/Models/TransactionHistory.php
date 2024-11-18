@@ -35,6 +35,7 @@ class TransactionHistory extends Model
         'cust_id',
         'remark',
         'reward_point',
+        'voided'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
