@@ -14,7 +14,8 @@ import { format, isValid, setHours, setMinutes, setSeconds, setMilliseconds } fr
 import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
 import { formatDateTime24H } from "@/Composables";
-
+import { Badge } from 'primereact/badge';
+        
 export default function OrderTable() {
 
     const formatToDBDateTime = (date, time = { hours: 0, minutes: 0, seconds: 0 }) => {
@@ -196,9 +197,17 @@ export default function OrderTable() {
         return (
             <div>
                 {
-                    cust.customer_id ? (
+                    cust.cust_id ? (
                         <div>
-                            {cust.customer_id}
+                            {cust.user ? (
+                                <div>
+                                    {cust.user.name}
+                                </div>
+                            ) : (
+                                <span className="text-xs">
+                                    User not found
+                                </span>
+                            )}
                         </div>
                     ) : (
                         <div>
@@ -249,7 +258,7 @@ export default function OrderTable() {
                                 <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
                                 <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
                                 <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
-                                <Column field="customer_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
+                                <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
                             </DataTable>
                         </div>
                     ) : (
@@ -266,19 +275,44 @@ export default function OrderTable() {
                         isOpen={isOpen}
                         close={closeModal}
                         title={
-                            <div>
-                                <span>Receipt</span>  <span>#{selectedTrans.receipt_no}</span>
+                            <div className="flex items-center gap-3">
+                                <div>
+                                    <span>Receipt</span>  <span>#{selectedTrans.receipt_no}</span>
+                                </div>
+                                <div>
+                                    {
+                                        selectedTrans.voided !== '0' ? (
+                                            <>
+                                                {
+                                                    selectedTrans.voided === '1' && (
+                                                        <>
+                                                            <span> </span><Badge value="VOIDED" severity="danger"></Badge>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    selectedTrans.voided === '2' && (
+                                                        <Badge value="REFUND" severity="warning"></Badge>
+                                                    )
+                                                }
+                                            </>
+                                        ) : (
+                                            ''
+                                        )
+                                    }
+                                </div>
                             </div>
                         }
                         closeIcon={<XIcon />}
                         maxWidth='md'
-                        maxHeight='md'
+                        maxHeight='lg'
+                        showFooter='hidden'
                     >
-                        <div className="grid grid-cols-2 gap-2 p-5">
-                            <div className="text-sm">Receipt ID:</div>
+                        <div className="grid grid-cols-2 gap-2 p-5 ">
+                            {/* <div className="text-sm">Receipt ID:</div>
                             <div className=" text-sm font-bold ">
                                 {selectedTrans.receipt_no}
-                            </div>
+                            </div> */}
 
                             <div className="text-sm">Transaction ID:</div>
                             <div className=" text-sm font-bold">
@@ -295,19 +329,67 @@ export default function OrderTable() {
                                 {formatDateTime24H(selectedTrans.receipt_end)}
                             </div>
 
-                            <div className="text-sm">Receipt Total:</div>
-                            <div className=" text-sm font-bold">
-                                RM {selectedTrans.receipt_total}
+                            <div className="text-sm">Discount Type:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.discount_type ? (
+                                        <div>
+                                            {
+                                                selectedTrans.discount_type === '0' && (
+                                                    <span>Percentage (%)</span>
+                                                )
+                                            }
+                                            {
+                                                selectedTrans.discount_type === '1' && (
+                                                    <span>Exact Amount ($)</span>
+                                                )
+                                            }
+                                        </div>
+                                    ) : (
+                                        <span>
+                                            -
+                                        </span>
+                                    )
+                                }
                             </div>
 
-                            <div className="text-sm">Receipt Grand Total:</div>
+                            <div className="text-sm">Discount Amount:</div>
                             <div className=" text-sm font-bold ">
-                                RM {selectedTrans.receipt_grand_total}
+                                RM {selectedTrans.discount_amount}
                             </div>
 
-                            <div className="text-sm">Receipt Rounding:</div>
+                            <div className="text-sm">Discount Receipt Amount:</div>
                             <div className=" text-sm font-bold ">
-                                RM {selectedTrans.rounding}
+                                RM {selectedTrans.discount_receipt_amount}
+                            </div>
+
+                            <div className="text-sm">Tips Type:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.tip_type ? (
+                                        <div>
+                                            {
+                                                selectedTrans.tip_type === '0' && (
+                                                    <span>Percentage (%)</span>
+                                                )
+                                            }
+                                            {
+                                                selectedTrans.tip_type === '1' && (
+                                                    <span>Exact Amount ($)</span>
+                                                )
+                                            }
+                                        </div>
+                                    ) : (
+                                        <span>
+                                            -
+                                        </span>
+                                    )
+                                }
+                            </div>
+
+                            <div className="text-sm">Tips Amount:</div>
+                            <div className=" text-sm font-bold ">
+                                RM {selectedTrans.tip_amount}
                             </div>
 
                             <div className="text-sm">Table ID:</div>
@@ -322,7 +404,45 @@ export default function OrderTable() {
 
                             <div className="text-sm">Customer ID:</div>
                             <div className=" text-sm font-bold ">
-                                {selectedTrans.customer_id ? selectedTrans.customer_id : '-'}
+                                {
+                                    selectedTrans.cust_id ? (
+                                        <div>
+                                            {
+                                                selectedTrans.user ? (
+                                                    <span>{selectedTrans.user.name}</span>
+                                                ) : (
+                                                    <span>User not found</span>
+                                                )
+                                            }
+                                        </div>
+                                    ) : (
+                                        '-'
+                                    )
+                                }
+                            </div>
+
+                            <div className="col-span-2 py-5">
+                                <div className="h-[1px] bg-slate-500"> </div>
+                            </div>
+
+                            <div className="text-sm ">Receipt Total:</div>
+                            <div className=" text-sm font-bold text-right">
+                                RM {selectedTrans.receipt_total}
+                            </div>
+
+                            <div className="text-sm ">Receipt Rounding:</div>
+                            <div className=" text-sm font-bold text-right">
+                                RM {selectedTrans.rounding}
+                            </div>
+
+                            <div className="text-sm ">Receipt Grand Total:</div>
+                            <div className=" text-sm font-bold text-right">
+                                RM {selectedTrans.receipt_grand_total}
+                            </div>
+
+                            <div className="text-sm ">Reward Point:</div>
+                            <div className=" text-sm font-bold text-right">
+                                {selectedTrans.reward_point} PTS
                             </div>
                         </div>
                     </Modal>

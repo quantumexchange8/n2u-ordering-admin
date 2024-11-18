@@ -32,6 +32,11 @@ class TransactionHistory extends Model
         'trans_by',
         'cust_name',
         'phone_no',
-        'customer_id',
+        'cust_id',
     ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cust_id', 'customer_id');
+    }
 }

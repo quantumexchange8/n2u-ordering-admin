@@ -173,21 +173,21 @@ class FetchDataController extends Controller
                     'discount_receipt_amount' => $transaction['DiscountOnReceiptAmt'],
                     'discount_id' => $transaction['DiscountID'],
                     'discount_item' => $transaction['DiscountOnItemAmt'],
-                    'TipsType' => $transaction['TipsType'],
-                    'TipsAmt' => $transaction['TipsAmt'],
-                    'TipsOnReceiptAmt' => $transaction['TipsOnReceiptAmt'],
-                    'Change' => $transaction['Change'],
+                    'tip_type' => $transaction['TipsType'],
+                    'tip_amount' => $transaction['TipsAmt'],
+                    'tip_receipt_amount' => $transaction['TipsOnReceiptAmt'],
+                    'change' => $transaction['Change'],
                     'table_id' => $transaction['TableID'],
                     'pax_no' => $transaction['NoOfPax'],
                     'trans_by' => $transaction['TransBy'],
-                    'cust_name' => $transaction['CustName'],
-                    'phone_no' => $transaction['PhoneNo'],
-                    'customer_id' => $transaction['CustomerID'],
+                    'cust_name' => $transaction['CustName'] ?? null,
+                    'phone_no' => $transaction['PhoneNo'] ?? null,
+                    'cust_id' => $transaction['CustomerID'] ?? null,
+                    'reward_point' => $transaction['RewardPoints'],
                 ]);
-
-                return redirect()->back();
-
             }
+
+            return redirect()->back();
 
         } else {
             return redirect()->back()->withErrors('error', 'Failed to fetch data');

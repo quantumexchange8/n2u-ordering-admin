@@ -155,7 +155,7 @@ export default function PointHistory() {
                         className='font-medium'
                     />
                 </IconField>
-                <Calendar 
+                {/* <Calendar 
                     value={dateFilterValue}
                     onChange={onDateFilterChange}
                     dateFormat="dd M yy"
@@ -164,7 +164,7 @@ export default function PointHistory() {
                     readOnlyInput
                     hideOnRangeSelection
                     showButtonBar
-                />
+                /> */}
                 
             </div>
         )
@@ -180,8 +180,8 @@ export default function PointHistory() {
                         <DataTable value={data} removableSort tableStyle={{ minWidth: '160px' }} header={header} filters={{ 'created_at': filters['created_at'] }} globalFilterFields={['user.name','type','amount','earning_point','old_point','new_point']}>
                             <Column field="name" header="Member" body={userDetails} filterField="user.name"></Column>
                             <Column field="type" header="type" body={(rowData) => rowData.type.charAt(0).toUpperCase() + rowData.type.slice(1)}></Column>
-                            <Column field="amount" header="amount" body={(rowData)=>`$${rowData.earning_point}`}></Column>
-                            <Column field="earning_point" header="Earning Points" body={(rowData)=>`${rowData.earning_point}pts`}></Column>
+                            {/* <Column field="amount" header="amount" body={(rowData)=>`$${rowData.amount}`}></Column> */}
+                            <Column field="earning_point" header="Points" body={(rowData)=>`${rowData.earning_point}pts`}></Column>
                             <Column field="old_point" header="Current Points" body={(rowData)=>`${rowData.old_point}pts`}></Column>
                             <Column field="new_point" header="New Points" body={(rowData)=>`${rowData.new_point}pts`}></Column>
                             <Column field="created_at" header="Requested Date" body={requestedDate} sortable></Column>
@@ -227,10 +227,10 @@ export default function PointHistory() {
                                 <div className="max-w-20 text-sm">Type</div>
                                 <div className="font-bold text-sm">{selectedPoint.type}</div>
 
-                                <div className="max-w-20 text-sm">Amount</div>
-                                <div className="font-bold text-sm">${selectedPoint.amount}</div>
+                                {/* <div className="max-w-20 text-sm">Amount</div>
+                                <div className="font-bold text-sm">${selectedPoint.amount}</div> */}
 
-                                <div className="text-sm">Earning Point</div>
+                                <div className="text-sm">Point</div>
                                 <div className="font-bold text-sm">{selectedPoint.earning_point}pts</div>
 
                                 <div className="text-sm">Current Point</div>

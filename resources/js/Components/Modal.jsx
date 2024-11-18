@@ -2,7 +2,7 @@ import { Button, CloseButton, Dialog, DialogPanel, DialogTitle } from '@headless
 import { useCallback, useState } from 'react';
 import { XIcon } from './Icon/Outline';
 
-export default function Modal({ children, show = false, maxWidth = 'md', maxHeight = 'md', isOpen, close, title, footer, closeIcon, preventCloseOnClickOutside = true }) {
+export default function Modal({ children, show = false, maxWidth = 'md', maxHeight = 'md', isOpen, close, title, footer, closeIcon, showFooter, preventCloseOnClickOutside = true }) {
 
     const maxWidthClass = {
         sm: 'sm:w-[300px] ',
@@ -47,7 +47,7 @@ export default function Modal({ children, show = false, maxWidth = 'md', maxHeig
                             </CloseButton>
                         </DialogTitle>
                         {children}
-                        <div className="w-full p-5 bg-white rounded-b-lg shadow-modal">
+                        <div className={`"w-full p-5 bg-white rounded-b-lg shadow-modal" ${showFooter}`}>
                             {footer}
                         </div>
                     </DialogPanel>

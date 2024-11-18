@@ -35,7 +35,9 @@ return new class extends Migration
             $table->string('trans_by')->nullable();
             $table->string('cust_name')->nullable();
             $table->string('phone_no')->nullable();
-            $table->string('customer_id')->nullable();
+            $table->integer('cust_id')->nullable();
+            $table->decimal('reward_point', 13, 2)->nullable();
+            $table->string('voided')->nullable();
             $table->timestamps();
         });
     }

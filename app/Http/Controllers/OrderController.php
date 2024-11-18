@@ -16,7 +16,7 @@ class OrderController extends Controller
     public function getOrderTransaction()
     {
 
-        $transaction = TransactionHistory::get();
+        $transaction = TransactionHistory::with(['user:id,customer_id,name'])->get();
 
         return response()->json($transaction);
     }
