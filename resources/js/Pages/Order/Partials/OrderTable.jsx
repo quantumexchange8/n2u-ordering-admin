@@ -89,6 +89,8 @@ export default function OrderTable() {
                 end_date: format(dates[1], 'yyyy-MM-dd') + ' 23:59:59',    // End date at 23:59:59
             });
 
+            fetchData()
+
             toast.success('Sync successfully.', {
                 title: 'Sync successfully.',
                 duration: 3000,
