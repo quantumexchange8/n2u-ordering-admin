@@ -356,69 +356,6 @@ export default function OrderTable() {
                                 {formatDateTime24H(selectedTrans.receipt_end)}
                             </div>
 
-                            <div className="text-sm">Discount Type:</div>
-                            <div className=" text-sm font-bold ">
-                                {
-                                    selectedTrans.discount_type ? (
-                                        <div>
-                                            {
-                                                selectedTrans.discount_type === '0' && (
-                                                    <span>Percentage (%)</span>
-                                                )
-                                            }
-                                            {
-                                                selectedTrans.discount_type === '1' && (
-                                                    <span>Exact Amount ($)</span>
-                                                )
-                                            }
-                                        </div>
-                                    ) : (
-                                        <span>
-                                            -
-                                        </span>
-                                    )
-                                }
-                            </div>
-
-                            <div className="text-sm">Discount Amount:</div>
-                            <div className=" text-sm font-bold ">
-                                RM {selectedTrans.discount_amount}
-                            </div>
-
-                            <div className="text-sm">Discount Receipt Amount:</div>
-                            <div className=" text-sm font-bold ">
-                                RM {selectedTrans.discount_receipt_amount}
-                            </div>
-
-                            <div className="text-sm">Tips Type:</div>
-                            <div className=" text-sm font-bold ">
-                                {
-                                    selectedTrans.tip_type ? (
-                                        <div>
-                                            {
-                                                selectedTrans.tip_type === '0' && (
-                                                    <span>Percentage (%)</span>
-                                                )
-                                            }
-                                            {
-                                                selectedTrans.tip_type === '1' && (
-                                                    <span>Exact Amount ($)</span>
-                                                )
-                                            }
-                                        </div>
-                                    ) : (
-                                        <span>
-                                            -
-                                        </span>
-                                    )
-                                }
-                            </div>
-
-                            <div className="text-sm">Tips Amount:</div>
-                            <div className=" text-sm font-bold ">
-                                RM {selectedTrans.tip_amount}
-                            </div>
-
                             <div className="text-sm">Table ID:</div>
                             <div className=" text-sm font-bold ">
                                 {selectedTrans.table_id}
@@ -455,6 +392,90 @@ export default function OrderTable() {
                                 }
                             </div>
 
+                            <div className="text-sm">Discount Type:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.discount_type ? (
+                                        <div>
+                                            {
+                                                selectedTrans.discount_type === '0' && (
+                                                    <span>Percentage (%)</span>
+                                                )
+                                            }
+                                            {
+                                                selectedTrans.discount_type === '1' && (
+                                                    <span>Exact Amount ($)</span>
+                                                )
+                                            }
+                                        </div>
+                                    ) : (
+                                        <span>
+                                            -
+                                        </span>
+                                    )
+                                }
+                            </div>
+
+                            <div className="text-sm">Discount Amount:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.discount_type === '0' && (
+                                        <span>
+                                            {selectedTrans.discount_amount}%
+                                        </span>
+                                    )
+                                }
+                                {
+                                    selectedTrans.discount_type === '1' && (
+                                        <span>
+                                            RM {selectedTrans.discount_amount}
+                                        </span>
+                                    )
+                                }
+                            </div>
+
+                            <div className="text-sm">Tips Type:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.tip_type ? (
+                                        <div>
+                                            {
+                                                selectedTrans.tip_type === '0' && (
+                                                    <span>Percentage (%)</span>
+                                                )
+                                            }
+                                            {
+                                                selectedTrans.tip_type === '1' && (
+                                                    <span>Exact Amount ($)</span>
+                                                )
+                                            }
+                                        </div>
+                                    ) : (
+                                        <span>
+                                            -
+                                        </span>
+                                    )
+                                }
+                            </div>
+
+                            <div className="text-sm">Tips Amount:</div>
+                            <div className=" text-sm font-bold ">
+                                {
+                                    selectedTrans.tip_type === '0' && (
+                                        <span>
+                                            {selectedTrans.tip_amount}%
+                                        </span>
+                                    )
+                                }
+                                {
+                                    selectedTrans.tip_type === '1' && (
+                                        <span>
+                                            RM {selectedTrans.tip_amount}
+                                        </span>
+                                    )
+                                }
+                            </div>
+
                             <div className="col-span-2 py-5">
                                 <div className="h-[1px] bg-slate-500"> </div>
                             </div>
@@ -462,6 +483,11 @@ export default function OrderTable() {
                             <div className="text-sm ">Receipt Total:</div>
                             <div className=" text-sm font-bold text-right">
                                 RM {selectedTrans.receipt_total}
+                            </div>
+
+                            <div className="text-sm">Discount Receipt Amount:</div>
+                            <div className=" text-sm font-bold text-right">
+                                RM {selectedTrans.discount_receipt_amount}
                             </div>
 
                             <div className="text-sm ">Receipt Rounding:</div>
