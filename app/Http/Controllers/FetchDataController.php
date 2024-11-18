@@ -182,7 +182,7 @@ class FetchDataController extends Controller
                     'trans_by' => $transaction['TransBy'],
                     'cust_name' => $transaction['CustName'] ?? null,
                     'phone_no' => $transaction['PhoneNo'] ?? null,
-                    'cust_id' => $transaction['CustomerID'] ?? null,
+                    'cust_id' => $transaction['CustomerID'] === "" ? null : $transaction['CustomerID'],
                     'reward_point' => $transaction['RewardPoints'],
                 ]);
             }
