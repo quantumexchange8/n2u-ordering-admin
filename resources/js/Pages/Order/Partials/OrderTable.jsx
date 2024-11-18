@@ -261,10 +261,10 @@ export default function OrderTable() {
                             >
                                 <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
                                 <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
-                                <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
                                 <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
                                 <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
-                                <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
+                                <Column field="reward_point" header="Reward Point (PTS)" style={{ minWidth: '140px' }} sortable></Column>
+                                <Column field="cust_id" header="Customer" sortable body={customerTemplate} style={{ minWidth: '130px'}}></Column>
                             </DataTable>
                         </div>
                     ) : (

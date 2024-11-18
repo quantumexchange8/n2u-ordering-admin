@@ -335,9 +335,9 @@ const PointIcon = ({color, className, ...rest}) => {
     );
 }
 
-const OrderIcon = () => {
+const OrderIcon = ({ className }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M15.4167 3.3335H4.58333C4.1231 3.3335 3.75 3.70659 3.75 4.16683V17.5002C3.75 17.9604 4.1231 18.3335 4.58333 18.3335H15.4167C15.8769 18.3335 16.25 17.9604 16.25 17.5002V4.16683C16.25 3.70659 15.8769 3.3335 15.4167 3.3335Z" stroke="currentColor" strokeLinejoin="round"/>
             <path d="M7.5 1.66699V4.16699" stroke="currentColor" strokeLinecap="square" strokeLinejoin="round"/>
             <path d="M12.5 1.66699V4.16699" stroke="currentColor" strokeLinecap="square" strokeLinejoin="round"/>
