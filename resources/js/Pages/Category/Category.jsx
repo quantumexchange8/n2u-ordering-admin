@@ -7,9 +7,9 @@ export default function MemberListing() {
 
     return (
         <Authenticated
-            header="Categories"
+            header="Category"
         >
-            <Head title="Categories" />
+            <Head title="Category" />
 
             <div className="flex flex-col gap-5">
                 <div className="w-full p-4 shadow-container bg-white/60 md:shadow-container rounded-xl flex flex-col gap-3">

@@ -7,10 +7,8 @@ import { InputIcon } from 'primereact/inputicon';
 import TextInput from "@/Components/TextInput";
 import Button from "@/Components/Button";
 import { FilterMatchMode } from 'primereact/api';
-import { DeleteIcon, EditIcon, SyncIcon, XIcon } from "@/Components/Icon/Outline";
-import { useForm } from "@inertiajs/react";
+import { SyncIcon } from "@/Components/Icon/Outline";
 import toast from "react-hot-toast";
-import Modal from "@/Components/Modal";
 import { NoAvailableData } from "@/Components/Icon/Brand";
 
 export default function Categories() {
@@ -19,8 +17,6 @@ export default function Categories() {
     const [isLoading, setIsLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [processing, setProcessing] = useState(false);
-    const [selectedTrans, setSelectedTrans] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -31,7 +27,6 @@ export default function Categories() {
         try {
 
             const response = await axios.get('/category/getCategory');
-            
             setData(response.data);
             
         } catch (error) {
@@ -124,6 +119,18 @@ export default function Categories() {
             </div>
         )
     }
+    
+    const imageBodyTemplate = (rowData) => {
+        return rowData.image ? (
+            <img
+                src={rowData.image}
+                alt="Category"
+                style={{ width: '80px', height: 'auto', borderRadius: '5px' }}
+            />
+        ) : (
+            <span>No Image</span>
+        );
+    };
 
     return (
         <>
@@ -139,12 +146,11 @@ export default function Categories() {
                                 tableStyle={{ minWidth: '160px' }} 
                                 header={header} 
                                 filters={filters}
-                                selectionMode="single"
-                                selection={selectedTrans}
                                 dataKey="id"
                                 scrollable
                             >
-                                <Column field="id" header="Category ID" style={{ minWidth: '200px' }} sortable></Column>
+                                <Column field="image" header="Category " body={imageBodyTemplate} style={{ minWidth: '200px' }}></Column>
+                                <Column field="name" header="Name" style={{ minWidth: '200px' }} sortable></Column>
 
                             </DataTable>
                         </div>
@@ -156,15 +162,14 @@ export default function Categories() {
                                 paginator 
                                 rows={8} 
                                 tableStyle={{ minWidth: '160px' }} 
-                                header={header} 
+                                header={header}
                                 filters={filters}
-                                selectionMode="single"
-                                selection={selectedTrans}
                                 dataKey="id"
                                 scrollable
                                 emptyMessage={customEmptyArrayMessage}
                             >
-                                <Column field="id" header="Category ID" style={{ minWidth: '200px' }} sortable></Column>
+                                <Column field="image" header="Category " body={imageBodyTemplate} style={{ minWidth: '200px' }} sortable></Column>
+                                <Column field="name" header="Name" style={{ minWidth: '200px' }} sortable></Column>
 
                             </DataTable>
                         </div>

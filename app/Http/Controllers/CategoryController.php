@@ -16,8 +16,8 @@ class CategoryController extends Controller
 
     public function getCategory()
     {
-        $category = Category::with(['categories:id,category_id'])
-                ->get();
+        $category = Category::where('status', !1)->get();
+
         return response()->json($category);
     }
 }

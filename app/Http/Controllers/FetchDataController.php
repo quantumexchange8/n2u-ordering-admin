@@ -219,25 +219,23 @@ class FetchDataController extends Controller
                 $catId = Category::where('category_id', $category['idCategory'])->first();
 
                 if ($catId) {
-                    // If the transaction ID already exists, skip to the next iteration
                     continue;
                 }
 
-                // Process $transaction only if the transaction ID does not exist
                 Category::create([
                     'category_id' => $category['idCategory'],
                     'name' => $category['Name'],
-                    'image' => $category['Image'],
+                    'image' => $category['Image'] === "" ? null : $category['Image'],
                     'assigned_printer' => $category['AssignedPrinter'],
                     'sequence' => $category['Sequence'],
                     'status' => $category['Voided'],
                     'availability' => $category['Availability'],
                     'auto_discount' => $category['AutomatedDiscount'],
-                    'accessible' => $category['Accessible'],
+                    'accessible' => $category['Accessible'] === "" ? null : $category['Accessible'],
                     'course_setting_id' => $category['CourseSettingID'],
-                    'contain_mod_group_id' => $category['ContainModGroupID'],
+                    'contain_mod_group_id' => $category['ContainModGroupID'] === "" ? null : $category['ContainModGroupID'],
                     'reporting_category_id' => $category['ReportingCategoryID'],
-                    'description' => $category['Description']
+                    'description' => $category['Description'] === "" ? null : $category['Description']
                 ]);
             }
 
