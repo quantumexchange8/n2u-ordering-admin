@@ -8,6 +8,7 @@ use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\Category;
 
 class FetchDataController extends Controller
 {
@@ -195,5 +196,53 @@ class FetchDataController extends Controller
             return redirect()->back()->withErrors('error', 'Failed to fetch data');
         }
 
+    }
+
+    public function fetchCategory(Request $request){
+        $this->apiKey = env('POS_token');
+        $resource_type = 'Category';
+        $outlet = 'outlet1';
+
+        $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
+            'api_token' => $this->apiKey,
+            'resource_type' => $resource_type,
+            'outlet' => $outlet,
+        ]);
+        
+        if ($response->successful()) {
+            $data = $response->json();
+
+            Log::debug('response', $data);
+
+            foreach ($data['result']['user_data'] as $category) {
+            
+                $catId = Category::where('category_id', $category['idCategory'])->first();
+
+                if ($catId) {
+                    continue;
+                }
+
+                Category::create([
+                    'category_id' => $category['idCategory'],
+                    'name' => $category['Name'],
+                    'image' => $category['Image'] === "" ? null : $category['Image'],
+                    'assigned_printer' => $category['AssignedPrinter'],
+                    'sequence' => $category['Sequence'],
+                    'status' => $category['Voided'],
+                    'availability' => $category['Availability'],
+                    'auto_discount' => $category['AutomatedDiscount'],
+                    'accessible' => $category['Accessible'] === "" ? null : $category['Accessible'],
+                    'course_setting_id' => $category['CourseSettingID'],
+                    'contain_mod_group_id' => $category['ContainModGroupID'] === "" ? null : $category['ContainModGroupID'],
+                    'reporting_category_id' => $category['ReportingCategoryID'],
+                    'description' => $category['Description'] === "" ? null : $category['Description']
+                ]);
+            }
+
+            return redirect()->back();
+
+        } else {
+            return redirect()->back()->withErrors('error', 'Failed to fetch data');
+        }
     }
 }
