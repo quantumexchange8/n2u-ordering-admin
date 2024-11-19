@@ -233,6 +233,30 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                 )
                             }
                         </div>
+                        <div >
+                            {
+                                !expanded ? (
+                                    <Link href={route('category.category')} className={`${
+                                        url === '/category/category' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/category/category' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <VoucherIcon color='currentColor' className={`${url === '/category/category' ? 'text-white' : 'text-gray-800'}`}/>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <Link href={route('category.category')} className={`${
+                                        url === '/category/category' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/category/category' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                            <VoucherIcon color='currentColor'/>
+                                            <div className="text-sm">
+                                                Category
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )
+                            }
+                        </div>
                         {/* <div >
                             {
                                 !expanded ? (
