@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 // import { EinbillLogo } from "@/Components/Icon/logo";
-import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon, PointIcon, OrderIcon, CategoryIcon} from "./Icon/Outline";
+import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon, PointIcon, OrderIcon, CategoryIcon, ItemIcon} from "./Icon/Outline";
 import { useState } from "react";
 import { useEffect } from "react";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
@@ -251,6 +251,30 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                             <CategoryIcon color='currentColor'/>
                                             <div className="text-sm">
                                                 Category
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )
+                            }
+                        </div>
+                        <div>
+                            {
+                                !expanded ? (
+                                    <Link href={route('item.item')} className={`${
+                                        url === '/item/item' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/item/item' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <ItemIcon color='currentColor' className={`${url === '/item/item' ? 'text-white' : 'text-gray-800'}`}/>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <Link href={route('item.item')} className={`${
+                                        url === '/item/item' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    }`}>
+                                        <div className={`${url === '/item/item' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                            <ItemIcon color='currentColor'/>
+                                            <div className="text-sm">
+                                                Item
                                             </div>
                                         </div>
                                     </Link>

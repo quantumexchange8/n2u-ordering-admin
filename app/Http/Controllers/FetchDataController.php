@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Category;
+use App\Models\Item;
 
 class FetchDataController extends Controller
 {
@@ -236,6 +237,79 @@ class FetchDataController extends Controller
                     'contain_mod_group_id' => $category['ContainModGroupID'] === "" ? null : $category['ContainModGroupID'],
                     'reporting_category_id' => $category['ReportingCategoryID'],
                     'description' => $category['Description'] === "" ? null : $category['Description']
+                ]);
+            }
+
+            return redirect()->back();
+
+        } else {
+            return redirect()->back()->withErrors('error', 'Failed to fetch data');
+        }
+    }
+
+    public function fetchItem(Request $request)
+    {
+        $this->apiKey = env('POS_token');
+        $resource_type = 'Item';
+        $outlet = 'outlet1';
+
+        $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
+            'api_token' => $this->apiKey,
+            'resource_type' => $resource_type,
+            'outlet' => $outlet,
+        ]);
+        
+        if ($response->successful()) {
+            $data = $response->json();
+
+            Log::debug('response', $data);
+
+            foreach ($data['result']['user_data'] as $item) {
+            
+                $itemId = Item::where('item_id', $item['idItem'])->first();
+
+                if ($itemId) {
+                    continue;
+                }
+
+                Item::create([
+                    'item_id' => $item['idItem'],
+                    'name' => $item['Name'],
+                    'description' => $item['Description'] === "" ? null : $item['Description'],
+                    'category_id' => $item['CategoryID'],
+                    'parent_item_id' => $item['ParentItemID'] === "" ? null : $item['ParentItemID'],
+                    'contain_item_id' => $item['ContainItemID'] === "" ? null : $item['ContainItemID'],
+                    'contain_mod_group_id' => $item['ContainModGroupID'] === "" ? null : $item['ContainModGroupID'],
+                    'modifier_group_id' => $item['ModifierGroupID'] === "" ? null : $item['ModifierGroupID'],
+                    'barcode_no' => $item['BarcodeNo'] === "" ? null : $item['BarcodeNo'],
+                    'weight' => $item['Weight'] === "" ? null : $item['Weight'],
+                    'price' => $item['Price'],
+                    'inventory' => $item['Inventory'] === "" ? null : $item['Inventory'],
+                    'member_owner' => $item['MemberOwner'] === "" ? null : $item['MemberOwner'],
+                    'image' => $item['Image'] === "" ? null : $item['Image'],
+                    'assigned_printer' => $item['AssignedPrinter'] === "" ? null : $item['AssignedPrinter'],
+                    'sequence' => $item['Sequence'],
+                    'availability' => $item['Availability'],
+                    'status' => $item['Voided'],
+                    'cost' => $item['Cost'] === "" ? null : $item['Cost'],
+                    'no_tax' => $item['NoTax'] === "" ? null : $item['NoTax'],
+                    'no_discount' => $item['NoDiscount'] === "" ? null : $item['NoDiscount'],
+                    'ta_price' => $item['TAPrice'] === "" ? 0.00 : $item['TAPrice'],
+                    'reward_points' => $item['RewardPoints'] === "" ? 0.00 : $item['RewardPoints'],
+                    'open_price' => $item['OpenPrice'] === "" ? null : $item['OpenPrice'],
+                    'color' => $item['Color'] === "" ? null : $item['Color'],
+                    'track_inventory' => $item['TrackInventory'] === "" ? null : $item['TrackInventory'],
+                    'commission_disc_yes' => $item['CommissionDiscYes'] === "" ? null : $item['CommissionDiscYes'],
+                    'base_uom' => $item['BaseUOM'] === "" ? null : $item['BaseUOM'],
+                    'alternate_uom' => $item['AlternateUOM'] === "" ? null : $item['AlternateUOM'],
+                    'contain_set_meal_group_id' => $item['ContainSetMealGroupID'] === "" ? null : $item['ContainSetMealGroupID'],
+                    'item_code' => $item['ItemCode'] === "" ? null : $item['ItemCode'],
+                    'is_variant' => $item['IsVariant'] === "" ? null : $item['IsVariant'],
+                    'variant_child' => $item['VariantChild'] === "" ? null : $item['VariantChild'],
+                    'hidden' => $item['Hidden'] === "" ? null : $item['Hidden'],
+                    'no_rewards' => $item['NoRewards'] === "" ? null : $item['NoRewards'],
+                    'default_quantity' => $item['DefaultQuantity'],
+
                 ]);
             }
 

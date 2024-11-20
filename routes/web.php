@@ -10,6 +10,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -95,6 +96,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/getCategory', [CategoryController::class, 'getCategory'])->name('category.getCategory');
     });
 
+         /**
+     * ==============================
+     *           Item
+     * ==============================
+     */
+    Route::prefix('item')->group(function () {
+        Route::get('/item', [ItemController::class, 'item'])->name('item.item');
+        Route::get('/getItem', [ItemController::class, 'getItem'])->name('item.getItem');
+    });
+
      /**
      * ==============================
      *           Table Listing
@@ -146,7 +157,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/fetch-transaction', [FetchDataController::class, 'fetchTransaction'])->name('fetch-transaction');
     Route::post('/fetch-category', [FetchDataController::class, 'fetchCategory'])->name('fetch-category');
-     
+    Route::post('/fetch-item', [FetchDataController::class, 'fetchItem'])->name('fetch-item');
+
 });
 
 Route::get('/components/buttons', function () {
