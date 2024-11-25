@@ -14,7 +14,7 @@ class ItemController extends Controller
 
     public function getItem()
     {
-        $item = Item::get();
+        $item = Item::where('status', !1)->get();
 
         return response()->json($item);
     }
