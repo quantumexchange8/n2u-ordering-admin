@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useState } from "react";
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
@@ -9,33 +8,17 @@ import { SyncIcon } from "@/Components/Icon/Outline";
 import toast from "react-hot-toast";
 import { Tag } from "primereact/tag";
 
-export default function ItemsListing({selectedCategory, handleFilter}) {
+export default function ItemsListing({categories, selectedCategory, handleFilter}) {
 
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [processing, setProcessing] = useState(false);
-    const [categories, setCategories] = useState([]);
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     });
-
-    const fetchCategory = async () => {
-        try {
-            const response = await axios.get('/category/getCategory');
-            setCategories(response.data);
-          } catch (error) {
-            console.error('Error fetching categories:', error);
-          } finally {
-            setIsLoading(false);
-          }  
-    };
-
-    useEffect(() => {
-        fetchCategory();
-    }, []);
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
