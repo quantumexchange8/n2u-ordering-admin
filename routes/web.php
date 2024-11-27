@@ -60,8 +60,8 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('order')->group(function () {
         Route::get('/order-history', [OrderController::class, 'orderHistory'])->name('order.orderHistory');
-        Route::get('/getOrderTransaction', [OrderController::class, 'getOrderTransaction'])->name('order.getOrderTransaction');
-        
+        Route::get('/getOrderHistory', [OrderController::class, 'getOrderHistory'])->name('order.getOrderHistory');
+
     });
 
      /**
@@ -84,6 +84,10 @@ Route::middleware('auth')->group(function () {
 
         // histroy
         Route::get('/history', [TransactionController::class, 'history'])->name('transaction.history');
+        
+        Route::get('/transaction-history', [OrderController::class, 'transactionHistory'])->name('transaction.transactionHistory');
+        Route::get('/getOrderTransaction', [OrderController::class, 'getOrderTransaction'])->name('order.getOrderTransaction');
+        
      });
 
      /**
@@ -158,6 +162,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/fetch-transaction', [FetchDataController::class, 'fetchTransaction'])->name('fetch-transaction');
     Route::post('/fetch-category', [FetchDataController::class, 'fetchCategory'])->name('fetch-category');
     Route::post('/fetch-item', [FetchDataController::class, 'fetchItem'])->name('fetch-item');
+    Route::post('/fetch-order', [FetchDataController::class, 'fetchOrder'])->name('fetch-order');
 
 });
 

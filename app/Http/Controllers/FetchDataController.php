@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\OrderHistory;
 
 class FetchDataController extends Controller
 {
@@ -318,5 +319,87 @@ class FetchDataController extends Controller
         } else {
             return redirect()->back()->withErrors('error', 'Failed to fetch data');
         }
+    }
+
+    public function fetchOrder(Request $request)
+    {
+        
+        $request->validate([
+            'start_date' => ['required'],
+            'end_date' => ['required'],
+        ]);
+
+        $this->apiKey = env('POS_token');
+        $resource_type = 'TransactionOrder';
+        $outlet = 'outlet1';
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        
+        $response = Http::post('https://cloud.geniuspos.com.my/api_access/api_resource', [
+            'api_token' => $this->apiKey,
+            'resource_type' => $resource_type,
+            'outlet' => $outlet,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            Log::debug('response', $data);
+
+            foreach ($data['result']['user_data'] as $order) {
+            
+                $orderId = OrderHistory::where('order_id', $order['idTransOrder'])->first();
+
+                if ($orderId) {
+                    // If the order ID already exists, skip to the next iteration
+                    continue;
+                }
+
+                // Process $transaction only if the transaction ID does not exist
+                OrderHistory::create([
+                    'order_id' => $order['idTransOrder'],
+                    'item_id' => $order['ItemID'],
+                    'quantity'=> $order['Quantity'],
+                    'trans_price' => $order['TransPrice'],
+                    'price_over_write' => $order['PriceOverWrite'],
+                    'discount_type' => $order['DiscountType'],
+                    'discount_value' => $order['DiscountValue'],
+                    'discount_id' => $order['DiscountID'],
+                    'remarks' => $order['Remarks'] === "" ? null : $order['Remarks'],
+                    'open_name' => $order['OpenName'] === "" ? null : $order['OpenName'],
+                    'transaction_id' => $order['TransactionID'],
+                    'status' => $order['Voided'],
+                    'order_weight' => $order['OWeight'] === "" ? 0.0000 : $order['OWeight'],
+                    'void_id' => $order['VoidID'],
+                    'order_date' => $order['OrderDate'],
+                    'void_date'=> $order['VoidDate'] === "" ? null : $order['VoidDate'],
+                    'order_by' => $order['OrderBy'],
+                    'void_by' => $order['VoidBy'],
+                    'each_tax_amt' => $order['EachTaxAmt'] === "" ? null : $order['EachTaxAmt'],
+                    'order_bill_discount' => $order['OrderBillDiscount'] === "" ? 0.0000 : $order['OrderBillDiscount'],
+                    'order_discount' => $order['OrderDiscount'] === "" ? 0.0000 : $order['OrderDiscount'],
+                    'nett_price' => $order['NettPrice'] === "" ? 0.0000 : $order['NettPrice'],
+                    'cost' => $order['Cost'],
+                    'deleted_date' => $order['DeletedDate'] === "" ? null : $order['DeletedDate'],
+                    'course_id' => $order['CourseID'],
+                    'seat_no' => $order['SeatNo'] === "" ? null : $order['SeatNo'],
+                    'commission_id' => $order['CommissionID'],
+                    'commission_amt' => $order['CommissionAmt'] === "" ? 0.00 : $order['CommissionAmt'],
+                    'commission_type' => $order['CommissionType'],
+                    'commission_disc_yes' => $order['CommissionDiscYes'],
+                    'pricing_level_id' => $order['PricingLevelID'] === "" ? null : $order['PricingLevelID'],
+                    'is_to_go' => $order['IsToGo'] === "" ? 0 : $order['IsToGo'],
+                    'kds_unique_id' => $order['KDSUniqueID']
+                ]);
+            }
+
+            return redirect()->back();
+
+        } else {
+            return redirect()->back()->withErrors('error', 'Failed to fetch data');
+        }
+
     }
 }

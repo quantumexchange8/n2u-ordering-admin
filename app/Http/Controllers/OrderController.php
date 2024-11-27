@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\TransactionHistory;
+use App\Models\OrderHistory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
-    public function orderHistory()
+    public function transactionHistory()
     {   
-        return Inertia::render('Order/OrderHistory');
+        return Inertia::render('TransactionHistory/TransactionHistory');
     }
 
     public function getOrderTransaction()
@@ -21,5 +22,18 @@ class OrderController extends Controller
                 ->get();
 
         return response()->json($transaction);
+    }
+
+    public function orderHistory()
+    {
+        return Inertia::render('Order/OrderHistory');
+    }
+
+    public function getOrderHistory()
+    {
+
+        $order = OrderHistory::get();
+
+        return response()->json($order);
     }
 }

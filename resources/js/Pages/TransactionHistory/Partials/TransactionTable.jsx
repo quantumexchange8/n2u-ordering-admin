@@ -48,7 +48,7 @@ export default function OrderTable() {
     const fetchData = async () => {
         try {
 
-            const response = await axios.get('/order/getOrderHistory');
+            const response = await axios.get('/transaction/getOrderTransaction');
             
             setOrderData(response.data);
             
@@ -78,13 +78,13 @@ export default function OrderTable() {
         setGlobalFilterValue(value);
     };
 
-    const SyncOrder = async () => {
+    const SyncTransaction = async () => {
 
         setProcessing(true);
 
         try {
 
-            await axios.post('/fetch-order', {
+            await axios.post('/fetch-transaction', {
                 start_date: format(dates[0], 'yyyy-MM-dd') + ' 00:00:00',  // Start date at 00:00:00
                 end_date: format(dates[1], 'yyyy-MM-dd') + ' 23:59:59',    // End date at 23:59:59
             });
@@ -179,11 +179,11 @@ export default function OrderTable() {
                             size="sm" 
                             iconOnly 
                             className="flex items-center gap-2 p-2.5 rounded-tr-md rounded-br-md rounded-tl-none rounded-bl-none"
-                            onClick={SyncOrder}
+                            onClick={SyncTransaction}
                             disabled={processing}
                         >
                             <SyncIcon className={`${processing ? 'animate-spin' : ''}`}/>
-                            <span>Sync Order</span>
+                            <span>Sync Transaction</span>
                         </Button>
                     </div>
                 </div>
