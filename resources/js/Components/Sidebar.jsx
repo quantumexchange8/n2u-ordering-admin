@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 // import { EinbillLogo } from "@/Components/Icon/logo";
-import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon, PointIcon, OrderIcon, CategoryIcon, ItemIcon} from "./Icon/Outline";
+import { ChevronDown, ChevronUp, ConfigurationIcon, CornerDownRight, DashboardIcon, HistoryIcon, LogoutIcon, MemberIcon, TableIcon, VoucherIcon, WalletIcon, XIcon, PointIcon, OrderIcon, CategoryIcon, ItemIcon, TransactionIcon} from "./Icon/Outline";
 import { useState } from "react";
 import { useEffect } from "react";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
@@ -16,6 +16,7 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
 
     const { url } = usePage();
     const [walletExpand, setWalletExpand] = useState(false);
+    const [foodExpand, setFoodExpand] = useState(false);
 
     const { datas, setData, post, processing, reset } = useForm({});
 
@@ -43,10 +44,17 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
         setWalletExpand(!walletExpand)
     }
 
+    const foodDropDown = () => {
+        setFoodExpand(!foodExpand)
+    }
+
     useEffect(() => {
         if (url === '/transaction/pending' || url === '/transaction/history') {
           setWalletExpand(true);
         }
+        if (url === '/food/category' || url === '/food/item') {
+            setFoodExpand(true);
+          }
       }, [url]);
 
     return (
@@ -127,7 +135,7 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                         url === '/transaction/transaction-history' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
                                     }`}>
                                         <div className={`${url === '/transaction/transaction-history' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
-                                            <OrderIcon color='currentColor' className={`${url === '/transaction/transaction-history' ? 'text-white' : 'text-gray-800'}`}/>
+                                            <TransactionIcon color='currentColor' className={`${url === '/transaction/transaction-history' ? 'text-white' : 'text-gray-800'}`}/>
                                         </div>
                                     </Link>
                                 ) : (
@@ -135,7 +143,7 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                         url === '/transaction/transaction-history' ? 'text-secondary-700 font-semibold' : 'text-gray-950'
                                     }`}>
                                         <div className={`${url === '/transaction/transaction-history' ? 'bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md' : 'p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md'} `}>
-                                            <OrderIcon color='currentColor' />
+                                            <TransactionIcon color='currentColor' />
                                             <div className="text-sm">
                                                 Transaction History
                                             </div>
@@ -257,51 +265,69 @@ export default function SideBar({ user, showingNavigationDropdown, expanded, tog
                                 )
                             }
                         </div>
-                        <div >
-                            {
-                                !expanded ? (
-                                    <Link href={route('category.category')} className={`${
-                                        url === '/category/category' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
-                                    }`}>
-                                        <div className={`${url === '/category/category' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
-                                            <CategoryIcon color='currentColor' className={`${url === '/category/category' ? 'text-white' : 'text-gray-800'}`}/>
-                                        </div>
-                                    </Link>
-                                ) : (
-                                    <Link href={route('category.category')} className={`${
-                                        url === '/category/category' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
-                                    }`}>
-                                        <div className={`${url === '/category/category' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
-                                            <CategoryIcon color='currentColor'/>
-                                            <div className="text-sm">
-                                                Category
-                                            </div>
-                                        </div>
-                                    </Link>
-                                )
-                            }
-                        </div>
                         <div>
                             {
                                 !expanded ? (
-                                    <Link href={route('item.item')} className={`${
-                                        url === '/item/item' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
+                                    <Link href={route('food.item')} className={`${
+                                        url === '/food/item' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
                                     }`}>
-                                        <div className={`${url === '/item/item' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
-                                            <ItemIcon color='currentColor' className={`${url === '/item/item' ? 'text-white' : 'text-gray-800'}`}/>
+                                        <div className={`${url === '/food/item' ? 'p-2 rounded drop-shadow bg-primary-500 hover:bg-primary-600 hover:rounded hover:drop-shadow-md' : 'p-2 hover:bg-gray-50 hover:rounded hover:text-primary-800 hover:drop-shadow-md'}`}>
+                                            <ItemIcon color='currentColor' className={`${url === '/food/item' ? 'text-white' : 'text-gray-800'}`}/>
                                         </div>
                                     </Link>
                                 ) : (
-                                    <Link href={route('item.item')} className={`${
-                                        url === '/item/item' ? 'text-primary-700 font-bold' : 'text-gray-950 font-medium'
-                                    }`}>
-                                        <div className={`${url === '/item/item' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
-                                            <ItemIcon color='currentColor'/>
-                                            <div className="text-sm">
-                                                Item
+
+                                    <div className="flex flex-col">
+                                        <div className="p-3 flex items-center justify-between gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md cursor-pointer" onClick={foodDropDown} href="#">
+                                            <div className="flex items-center gap-3">
+                                                <ItemIcon color='currentColor'/>
+                                                <div className="text-sm">
+                                                    Food
+                                                </div> 
+                                            </div>
+                                            <div>
+                                                {
+                                                    foodExpand ? <ChevronUp /> : <ChevronDown />
+                                                }
                                             </div>
                                         </div>
-                                    </Link>
+                                        <div 
+                                            className={`overflow-hidden transition-all duration-400 ease-in-out ${
+                                                foodExpand ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                                            }`}
+                                        >
+                                            <div className="flex gap-1 items-center pl-4">
+                                                <div>
+                                                    <CornerDownRight />
+                                                </div>
+                                                <Link href={route('food.item')} className={`${
+                                                    url === '/food/item' ? 'text-primary-700 font-bold w-full' : 'text-gray-950 font-medium w-full'
+                                                }`}>
+                                                    <div className={`${url === '/food/item' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                                        {/* <ItemIcon color='currentColor'/> */}
+                                                        <div className="text-sm">
+                                                            Item
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                            <div className="flex gap-1 items-center pl-4">
+                                                <div>
+                                                    <CornerDownRight />
+                                                </div>
+                                                <Link href={route('food.category')} className={`${
+                                                    url === '/food/category' ? 'text-primary-700 font-bold w-full' : 'text-gray-950 font-medium w-full'
+                                                }`}>
+                                                    <div className={`${url === '/food/category' ? "bg-primary-500 font-bold text-white rounded-lg p-3 flex items-center gap-3 drop-shadow hover:drop-shadow-md" : "p-3 flex items-center gap-3 font-medium hover:bg-primary-100 hover:rounded hover:text-primary-500 hover:drop-shadow-md" } `}>
+                                                        {/* <CategoryIcon color='currentColor'/> */}
+                                                        <div className="text-sm">
+                                                            Category
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
                                 )
                             }
                         </div>

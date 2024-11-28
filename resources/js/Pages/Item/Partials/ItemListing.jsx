@@ -87,31 +87,35 @@ export default function ItemsListing({categories, selectedCategory, handleFilter
     const header = renderHeader();
     
     return (
-        <>
-            <div> 
+        <div className="flex flex-col gap-5">
+            <div>
                 {header}
-                <div className="flex space-x-4 p-6 rounded-lg overflow-y-hidden">
-                    <Tag
-                        key={""}
-                        onClick={() => handleFilter(null)}
-                        value="All"
-                        className={`text-nowrap inline-flex text-sm h-10 px-4 py-2 text-neutral-900 border border-neutral-200 rounded-full shadow-input hover:bg-neutral-100 
-                            ${selectedCategory === null ? "bg-neutral-100" : "bg-white"}`}                                
-                    >   
-                    </Tag>
-                    {categories.map((category) => (
-                    <Tag
-                        key={category.id}
-                        onClick={() => handleFilter(category.id)} 
-                        value={category.name}
-                        className={`text-nowrap inline-flex text-sm h-10 px-4 py-2 text-neutral-900 border border-neutral-200 rounded-full shadow-input hover:bg-neutral-100 
-                            ${selectedCategory === category.id ? "bg-neutral-100" : "bg-white"}`}                                
-                    >
-                    </Tag>
-                    ))} 
-                </div>  
-            </div>  
-        </>
+            </div>
+            <div className="flex items-center gap-3 py-2 rounded-lg overflow-y-hidden lg:max-w-screen-xl xl:max-w-[1440px]">
+                <div
+                    onClick={() => handleFilter(null)}
+                    value="All"
+                    className={` flex items-center font-bold select-none cursour-pointer text-sm h-10 px-4 py-2 border border-neutral-200 rounded-full shadow-input hover:bg-neutral-100
+                        ${selectedCategory === null ? "bg-primary-500 text-white " : " bg-white text-black "}`}                                
+                >  
+                    <span >All</span>
+                    
+                </div>
+                {
+                    categories.map((category) => (
+                        <div
+                            key={category.id}
+                            onClick={() => handleFilter(category.id)} 
+                            value={category.name}
+                            className={`flex items-center font-bold select-none cursour-pointer text-sm h-10 px-4 py-2 border border-neutral-200 rounded-full shadow-input hover:bg-neutral-100 
+                                ${selectedCategory === category.id ? "bg-primary-500 text-white " : "bg-white text-black "}`}                                
+                        >
+                            <div className="min-w-20 text-center">{category.name}</div>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
     )
 
 }

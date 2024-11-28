@@ -239,6 +239,28 @@ export default function OrderTable() {
         )
     }
 
+    const customLoadingMessage = () => {
+        return (
+            <div className="flex flex-col items-center justify-center h-[40vh]">
+                {
+                    isLoading ? (
+                        <l-zoomies
+                        size="150"
+                        stroke="5"
+                        bg-opacity="0.1"
+                        speed="1.0" 
+                        color="#F26522" 
+                        ></l-zoomies>
+                    ) : (
+                        <div>
+                            No Available Option
+                        </div>
+                    )
+                }
+            </div>
+        )
+    }
+
     return (
         <>
             <div className="flex flex-col">
@@ -249,7 +271,7 @@ export default function OrderTable() {
                                 value={orderData} 
                                 removableSort 
                                 paginator 
-                                rows={8} 
+                                rows={10} 
                                 tableStyle={{ minWidth: '160px' }} 
                                 header={header} 
                                 filters={filters}
@@ -258,6 +280,7 @@ export default function OrderTable() {
                                 onSelectionChange={(e) => openModal(e.value)}
                                 dataKey="id"
                                 scrollable
+                                rowsPerPageOptions={[5, 10, 25, 50]}
                             >
                                 <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
                                 <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
@@ -269,28 +292,40 @@ export default function OrderTable() {
                         </div>
                     ) : (
                         <div>
-                            <DataTable 
-                                value={orderData} 
-                                removableSort 
-                                paginator 
-                                rows={8} 
-                                tableStyle={{ minWidth: '160px' }} 
-                                header={header} 
-                                filters={filters}
-                                selectionMode="single"
-                                selection={selectedTrans}
-                                onSelectionChange={(e) => openModal(e.value)}
-                                dataKey="id"
-                                scrollable
-                                emptyMessage={customEmptyArrayMessage}
-                            >
-                                <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
-                                <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
-                                <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
-                                <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
-                                <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
-                                <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
-                            </DataTable>
+                            {
+                                isLoading ? (
+                                    <DataTable 
+                                        header={header} 
+                                        rowsPerPageOptions={[5, 10, 25, 50]}
+                                        paginator 
+                                        tableStyle={{ minWidth: '160px' }} 
+                                        emptyMessage={customLoadingMessage}
+                                    >
+                                        <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
+                                        <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
+                                        <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
+                                        <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
+                                        <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
+                                        <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
+                                    </DataTable>
+                                ) : (
+                                    <DataTable 
+                                        header={header} 
+                                        rowsPerPageOptions={[5, 10, 25, 50]}
+                                        paginator 
+                                        tableStyle={{ minWidth: '160px' }} 
+                                        emptyMessage={customEmptyArrayMessage}
+                                    >
+                                        <Column field="receipt_start" header="Receipt Start" style={{ minWidth: '200px' }} sortable></Column>
+                                        <Column field="receipt_no" header="Receipt ID"  style={{ minWidth: '120px' }} sortable></Column>
+                                        <Column field="transaction_id" header="Transaction ID" style={{ minWidth: '140px' }} sortable></Column>
+                                        <Column field="receipt_total" header="Receipt Amount (RM)"  style={{ minWidth: '160px' }} sortable></Column>
+                                        <Column field="receipt_grand_total" header="Receipt Grand Total (RM)"  style={{ minWidth: '190px' }} sortable></Column>
+                                        <Column field="cust_id" header="Customer" body={customerTemplate} style={{ minWidth: '130px'}}></Column>
+                                    </DataTable>
+                                )
+                            }
+                            
                         </div>
                     )
                 }

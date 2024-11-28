@@ -92,22 +92,14 @@ Route::middleware('auth')->group(function () {
 
      /**
      * ==============================
-     *           Category
+     *           Food
      * ==============================
      */
-    Route::prefix('category')->group(function () {
-        Route::get('/category', [CategoryController::class, 'category'])->name('category.category');
-        Route::get('/getCategory', [CategoryController::class, 'getCategory'])->name('category.getCategory');
-    });
-
-         /**
-     * ==============================
-     *           Item
-     * ==============================
-     */
-    Route::prefix('item')->group(function () {
-        Route::get('/item', [ItemController::class, 'item'])->name('item.item');
-        Route::get('/getItem', [ItemController::class, 'getItem'])->name('item.getItem');
+    Route::prefix('food')->group(function () {
+        Route::get('/category', [CategoryController::class, 'category'])->name('food.category');
+        Route::get('/getCategory', [CategoryController::class, 'getCategory'])->name('food.getCategory');
+        Route::get('/item', [ItemController::class, 'item'])->name('food.item');
+        Route::get('/getItem', [ItemController::class, 'getItem'])->name('food.getItem');
     });
 
      /**

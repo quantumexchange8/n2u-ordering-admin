@@ -26,7 +26,7 @@ export default function Categories() {
     const fetchData = async () => {
         try {
 
-            const response = await axios.get('/category/getCategory');
+            const response = await axios.get('/food/getCategory');
             setData(response.data);
             
         } catch (error) {

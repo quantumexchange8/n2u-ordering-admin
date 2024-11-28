@@ -12,7 +12,7 @@ export default function Item() {
     
     const fetchCategory = async () => {
         try {
-            const response = await axios.get('/category/getCategory');
+            const response = await axios.get('/food/getCategory');
             setCategories(response.data);
           } catch (error) {
             console.error('Error fetching categories:', error);
@@ -32,14 +32,12 @@ export default function Item() {
     return (
         <Authenticated header="Item">
             <Head title="Item" />
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-5">
                     <ItemsListing 
                         categories={categories}
                         selectedCategory={selectedCategory} 
                         handleFilter={handleFilter} 
                     />
-                </div>
-                <div className="flex flex-col">
                     <ItemTable
                         categories={categories}
                         selectedCategory={selectedCategory} 
