@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -331,11 +331,11 @@ export default function OrderTable() {
                             </div>
                         }
                         closeIcon={<XIcon />}
-                        maxWidth='md'
+                        maxWidth='lg'
                         maxHeight='lg'
                         showFooter='hidden'
                     >
-                        <div className="grid grid-cols-2 gap-2 p-5 ">
+                        <div className="grid grid-cols-2 gap-2 p-5">
                             {/* <div className="text-sm">Receipt ID:</div>
                             <div className=" text-sm font-bold ">
                                 {selectedTrans.receipt_no}
@@ -455,7 +455,80 @@ export default function OrderTable() {
                                 }
                             </div>
 
-                            <div className="col-span-2 py-5">
+                            <div className="col-span-2 py-3">
+                                <div className="h-[1px] bg-slate-500"> </div>
+                            </div>
+
+                            
+                            <div className="text-sm text-center col-span-2">
+                                <div className="grid grid-cols-7 gap-2 px-5 py-2">
+                                    {selectedTrans.orders && selectedTrans.orders.length > 0 ? (
+                                        <>
+                                            <div className="col-span-2 font-bold">Item</div>
+                                            <div className="font-bold">Quantity</div>
+                                            <div className="font-bold">Selling Price</div>
+                                            <div className="font-bold">Discount Type</div>
+                                            <div className="font-bold">Discount Amount</div>
+                                            <div className="font-bold">Nett Price</div>
+
+                                            {selectedTrans.orders.map((order) => (
+                                                <React.Fragment key={order.order_id}>
+                                                    <div className="text-left col-span-2">{order.item?.name}</div>
+                                                    <div>{order.quantity}</div>
+                                                    <div>RM {order.trans_price}</div>
+                                                    <div>{order.discount_type? (
+                                                            <div>
+                                                                {
+                                                                    order.discount_type === '0' && (
+                                                                        <span>%</span>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    order.discount_type === '1' && (
+                                                                        <span>RM</span>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            ) : (
+                                                                <span>
+                                                                    -
+                                                                </span>
+                                                            )
+                                                        }
+                                                    </div>
+                                                    <div>{order.discount_value}</div>
+                                                        <div>
+                                                            {
+                                                                order.status !== '0' ? (
+                                                                    <>
+                                                                        {
+                                                                            order.status === '1' && (
+                                                                                <>
+                                                                                    <span> </span><Badge value="VOIDED" severity="danger"></Badge>
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                        {
+                                                                            order.status === '2' && (
+                                                                                <Badge value="REFUND" severity="warning"></Badge>
+                                                                            )
+                                                                        }
+                                                                    </>
+                                                                ) : (
+                                                                    <div>RM {Number(order.nett_price).toFixed(2)}</div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                </React.Fragment>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        <div className="col-span-4 justify-center">No orders found</div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div className="col-span-2 py-3">
                                 <div className="h-[1px] bg-slate-500"> </div>
                             </div>
 

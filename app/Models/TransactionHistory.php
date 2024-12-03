@@ -42,4 +42,9 @@ class TransactionHistory extends Model
     {
         return $this->belongsTo(User::class, 'cust_id', 'customer_id');
     }
+
+    public function orders()
+    {   
+        return $this->hasMany(OrderHistory::class, 'transaction_id', 'transaction_id');
+    }
 }

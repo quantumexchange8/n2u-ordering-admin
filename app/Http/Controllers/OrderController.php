@@ -31,9 +31,11 @@ class OrderController extends Controller
 
     public function getOrderHistory()
     {
+        $order = TransactionHistory::with([
+            'orders:id,transaction_id,order_id,item_id,quantity,trans_price,nett_price,discount_type,discount_value,status',
+            'orders.item:item_id,name'
+            ])->get();
 
-        $order = OrderHistory::get();
-
-        return response()->json($order);
+    return response()->json($order);
     }
 }

@@ -44,4 +44,15 @@ class OrderHistory extends Model
         'is_to_go',
         'kds_unique_id'
     ];
+
+    public function transaction(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TransactionHistory::class, 'transaction_id', 'transaction_id');
+    }
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'item_id', 'item_id');
+    }
+
 }
