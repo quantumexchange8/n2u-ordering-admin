@@ -16,7 +16,9 @@ import Modal from "@/Components/Modal";
 import { formatDateTime24H } from "@/Composables";
 import { Badge } from 'primereact/badge';
 import { NoAvailableData } from "@/Components/Icon/Brand";
-        
+import { saveAs } from 'file-saver';
+import { utils, write } from 'xlsx';
+
 export default function OrderTable() {
 
     const formatToDBDateTime = (date, time = { hours: 0, minutes: 0, seconds: 0 }) => {
@@ -139,7 +141,77 @@ export default function OrderTable() {
             },
         }));
     };
-    
+
+    const exportToExcel = (data, fileName, columns) => {
+        const columnName = {
+            transaction_id: 'Transaction ID',
+            receipt_no: 'Receipt ID',
+            receipt_total: 'Receipt Amount (RM)',
+            receipt_grand_total: 'Receipt Grand Total (RM)',
+            reward_point: 'Reward Point (PTS)',
+            receipt_start: 'Receipt Start',
+            receipt_end: 'Receipt End',
+            discount_type: 'Discount Type',
+            discount_amount: 'Discount Amount',
+            discount_receipt_amount: 'Discount Receipt Amount',
+            tip_type: 'Tips Type',
+            tip_amount: 'Tips Amount',
+            table_id: 'Table ID',
+            pax_no: 'Pax No',
+            cust_name: 'Customer',
+            phone_no: 'Phone No'
+        };
+
+        const processedData = data.map((row) =>
+            Object.fromEntries(
+                columns.map((key) => [columnName[key] || key, row[key]])
+            )
+        );
+
+        const worksheet = utils.json_to_sheet(processedData);
+        const workbook = utils.book_new();
+        utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+        const excelBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `${fileName}.xlsx`);
+    };
+
+    const handleExport = () => {
+        setProcessing(true);
+        const columnsToExport = [
+            'transaction_id',
+            'receipt_no',
+            'receipt_total',
+            'receipt_grand_total',
+            'reward_point',
+            'receipt_start',
+            'receipt_end',
+            'discount_type',
+            'discount_amount',
+            'discount_receipt_amount',
+            'tip_type',
+            'tip_amount',
+            'table_id',
+            'pax_no',
+            'cust_name',
+            'phone_no'
+        ];
+
+        const filteredData = globalFilterValue
+            ? orderData.filter((row) =>
+                Object.values(row).some((value) =>
+                    value?.toString().toLowerCase().includes(globalFilterValue.toLowerCase())
+                )
+            )
+            : orderData;
+        if (!filteredData.length) {
+            alert("No data to export.");
+            setProcessing(false);
+            return;
+        }
+        exportToExcel(filteredData, 'Transaction History', columnsToExport);
+        setProcessing(false);
+    };
 
     const renderHeader = () => {
         return (
@@ -156,6 +228,17 @@ export default function OrderTable() {
                                 className='font-medium'
                             />
                         </IconField>
+                    </div>
+                    <div>
+                        <Button 
+                            size="sm" 
+                            iconOnly 
+                            className="flex items-center gap-2 p-2.5"
+                            onClick={handleExport}
+                            disabled={processing}
+                        >
+                            <span>Export</span>
+                        </Button>
                     </div>
                 </div>
                 <div className="flex items-center">
