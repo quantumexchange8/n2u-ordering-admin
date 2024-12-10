@@ -37,6 +37,8 @@ export default function OrderTable() {
     const [dates, setDates] = useState(null);
     const [selectedTrans, setSelectedTrans] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [date, setDate] = useState(null);
+    const [month, setMonth] = useState(null);
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -113,33 +115,31 @@ export default function OrderTable() {
     }
 
     const onDateChange = (e) => {
-        const selectedDates = e.value; // Get selected dates
-        
-        // Set the start date to 'yyyy-MM-dd 00:00:00'
-        const startDate = selectedDates[0]
-            ? formatToDBDateTime(selectedDates[0], { hours: 0, minutes: 0, seconds: 0 })
-            : null;
-    
-        // Set the end date to 'yyyy-MM-dd 23:59:59'
-        const endDate = selectedDates[1]
-            ? formatToDBDateTime(selectedDates[1], { hours: 23, minutes: 59, seconds: 59 })
-            : null;
-    
-        setData('start_date', startDate);
-        setData('end_date', endDate);
-    
-        setDates(selectedDates); // Update selected dates in state
-    
-        // Format the dates and set them for filtering in DB format
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            created_at: {
-                value: selectedDates && selectedDates.length > 0
-                    ? selectedDates.map(date => formatToDBDateTime(date, { hours: 0, minutes: 0, seconds: 0 })).filter(date => date !== null)
-                    : null,
-                matchMode: 'between'
-            },
-        }));
+        const selectedDate = e.value; 
+        setMonth(selectedDate); 
+
+        if (selectedDate) {
+            const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1, 0, 0, 0);
+            const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59);
+
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                receipt_start: {
+                    value: [startOfMonth.toISOString(), endOfMonth.toISOString()],
+                    matchMode: FilterMatchMode.BETWEEN
+                }
+            }));
+
+        } else {
+            // Reset the filter if no date is selected
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                receipt_start: {
+                    value: null,
+                    matchMode: FilterMatchMode.BETWEEN
+                }
+            }));
+        }
     };
 
     const exportToExcel = (data, fileName, columns) => {
@@ -197,27 +197,38 @@ export default function OrderTable() {
             'phone_no'
         ];
 
-        const filteredData = globalFilterValue
-            ? orderData.filter((row) =>
-                Object.values(row).some((value) =>
-                    value?.toString().toLowerCase().includes(globalFilterValue.toLowerCase())
-                )
-            )
-            : orderData;
+        const filteredData = orderData.filter((row) => {
+            if (filters.global.value) {
+                const globalFilterMatch = Object.values(row).some((value) =>
+                    value?.toString().includes(filters.global.value)
+                );
+                if (!globalFilterMatch) return false;
+            }
+
+            if (filters.receipt_start.value) {
+                const [startDate, endDate] = filters.receipt_start.value;
+                const rowDate = new Date(row.receipt_start);
+                if (rowDate < new Date(startDate) || rowDate > new Date(endDate)) {
+                    return false;
+                }
+            }
+    
+            return true;
+        });
+    
         if (!filteredData.length) {
             alert("No data to export.");
-            setProcessing(false);
             return;
         }
+
         exportToExcel(filteredData, 'Transaction History', columnsToExport);
         setProcessing(false);
     };
 
     const renderHeader = () => {
         return (
-            <div className="flex justify-between">
-                <div className="flex gap-2 items-center">
-                    <div>
+            <div className="flex gap-2 md:flex-row sm:flex-col justify-between">
+                    <div className="flex gap-2 items-center">
                         <IconField iconPosition="left">
                             <InputIcon className="pi pi-search" />
                             <TextInput 
@@ -225,22 +236,31 @@ export default function OrderTable() {
                                 onChange={onGlobalFilterChange} 
                                 placeholder="Keyword Search"
                                 withIcon
-                                className='font-medium'
+                                className='font-normal max-w-44'
                             />
                         </IconField>
-                    </div>
-                    <div>
+                        <IconField iconPosition="left">
+                            <InputIcon className="pi pi-calendar" />
+                            <Calendar
+                                value={month}
+                                onChange={onDateChange}
+                                className="w-auto max-w-44 border border-neutral-100 rounded-lg hover:border-primary-500 focus:border-primary-500 focus:shadow-none focus:outline-none focus:ring-0"
+                                placeholder="     Date Search"
+                                view="month"
+                                dateFormat="      mm/yy"
+                                showButtonBar 
+                            />
+                        </IconField>
                         <Button 
                             size="sm" 
                             iconOnly 
-                            className="flex items-center gap-2 p-2.5"
+                            className="flex items-center gap-2 p-2.5 rounded-md"
                             onClick={handleExport}
                             disabled={processing}
                         >
                             <span>Export</span>
                         </Button>
                     </div>
-                </div>
                 <div className="flex items-center">
                     <div>
                         <Calendar  
@@ -266,7 +286,7 @@ export default function OrderTable() {
                             disabled={processing}
                         >
                             <SyncIcon className={`${processing ? 'animate-spin' : ''}`}/>
-                            <span>Sync Transaction</span>
+                            <span className="whitespace-nowrap">Sync Transaction</span>
                         </Button>
                     </div>
                 </div>
